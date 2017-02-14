@@ -44,4 +44,13 @@
 		<url-pattern>*.xhtml</url-pattern>
 	</servlet-mapping>
 
+	<filter>
+		<filter-name>AuthorizationFilter</filter-name>
+		<filter-class>sep_intro.jsf.AuthorizationFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>AuthorizationFilter</filter-name>
+		<url-pattern>*.xhtml</url-pattern>
+	</filter-mapping>
+
 </web-app>

@@ -5,19 +5,22 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 	<ui:define name="title">Profile</ui:define>
 	<ui:define name="content">
+		<h:form>
+			<p>Welcome, #{userSession.user.userName}</p>
+			<h:commandButton action="#{userSession.logout}" value="Logout"></h:commandButton>
+		</h:form>
 		<h1>Edit Profile</h1>
-		<span>Hello, #{userSession.user.userName}</span>
 		<h:form id="profile_edit">
 			<h:messages styleClass="messages" />
 			<h:panelGrid columns="2">
 				<h:outputLabel value="Username:" for="username" />
-				<h:inputText label="Username" id="username" value="#{userSession.user.userName}" required="true"></h:inputText>
+				<h:inputText label="Username" id="username"
+					value="#{userSession.user.userName}" required="true"></h:inputText>
 				<h:outputLabel value="Password:" for="password" />
-				<h:inputSecret label="Password" id="password" value="#{userSession.user.password}"					
-required="true" />
+				<h:inputSecret label="Password" id="password"
+					value="#{userSession.user.password}" required="true" />
 			</h:panelGrid>
-			<h:commandButton value="Login"
-				action="#{session.login}" />
+			<h:commandButton value="Save" action="#{session.login}" />
 		</h:form>
 	</ui:define>
 </ui:composition>

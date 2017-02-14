@@ -1,9 +1,12 @@
-package sep_intro;
+package sep_intro.model;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
+import javax.faces.context.FacesContext;
 
+import sep_intro.jsf.JsfUtil;
 import sep_intro.model.repository.FakeUserRepository;
 import sep_intro.model.repository.UserRepository;
 
@@ -65,10 +68,17 @@ public class Login {
 		if(user != null &&
 			user.verifyPassword(this.getPassword())) {
 			this.userSession.setUser(user);
-			return "profile.xhtml?faces-redirect=true";
+			
+			JsfUtil.getSession().setAttribute("loggedIn", true);
+			
+			return "profile";
 		}
 		
-		// TODO message!
+		FacesContext.getCurrentInstance().addMessage(
+                null,
+                new FacesMessage(FacesMessage.SEVERITY_WARN,
+                "Invalid Login!",
+                "Please Try Again!"));
 		return null;
 	}
 }

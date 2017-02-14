@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import sep_intro.User;
+import sep_intro.model.User;
 
 public class FakeUserRepository implements UserRepository {
 private static final User[] USERS = { new User("user", "leet"), new User("admin", "1337") };

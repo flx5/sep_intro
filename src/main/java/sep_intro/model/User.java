@@ -1,4 +1,4 @@
-package sep_intro;
+package sep_intro.model;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -23,6 +23,7 @@ public class User {
 	private byte[] salt;
 
 	// TODO Address
+	// TODO Update via profile
 
 	public User(String userName, String plainPassword) {
 		this.userName = userName;
