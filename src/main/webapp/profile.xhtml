@@ -15,12 +15,47 @@
 			<h:panelGrid columns="2">
 				<h:outputLabel value="Username:" for="username" />
 				<h:inputText label="Username" id="username"
-					value="#{userSession.user.userName}" required="true"></h:inputText>
+					value="#{userSession.user.userName}" required="true" />
+
+				<h:outputLabel value="Real name:" for="realName" />
+				<h:inputText label="Real name" id="realName"
+					value="#{userSession.user.realName}" required="false" />
+
+				<h:outputLabel value="Birthday:" for="birthday" />
+				<h:inputText label="Birthday" id="birthday"
+					value="#{userSession.user.birthday}" required="true">
+					<f:convertDateTime pattern="yyyy-MM-dd" />
+				</h:inputText>
+
+				<h:outputLabel value="Country:" for="country" />
+				<h:inputText label="Country" id="country"
+					value="#{userSession.user.address.country}" required="false" />
+
+				<h:outputLabel value="Postal code:" for="zipcode" />
+				<h:inputText label="Postal code" id="zipcode"
+					value="#{userSession.user.address.zipcode}" required="false" />
+
+				<h:outputLabel value="City:" for="city" />
+				<h:inputText label="City" id="city"
+					value="#{userSession.user.address.city}" required="false" />
+
+				<h:outputLabel value="Street:" for="street" />
+				<h:inputText label="Street" id="street"
+					value="#{userSession.user.address.street}" required="false" />
+
+				<h:outputLabel value="Streetnumber:" for="streetnr" />
+				<h:inputText type="number" label="Streetnumber" id="streetnr"
+					value="#{userSession.user.address.streetNumber}" required="false" />
+			</h:panelGrid>
+			<h:commandButton value="Save" action="#{userSession.saveUser}" />
+		</h:form>
+		<h:form id="profile_pw_edit">
+			<h:panelGrid columns="2">
 				<h:outputLabel value="Password:" for="password" />
 				<h:inputSecret label="Password" id="password"
 					value="#{userSession.user.password}" required="true" />
 			</h:panelGrid>
-			<h:commandButton value="Save" action="#{session.login}" />
+			<h:commandButton value="Save" action="#{userSession.saveUser}" />
 		</h:form>
 	</ui:define>
 </ui:composition>

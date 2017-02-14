@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import sep_intro.model.UserSession;
+
 public class AuthorizationFilter implements Filter {
 
 	@Override
@@ -24,12 +26,14 @@ public class AuthorizationFilter implements Filter {
 
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse res = (HttpServletResponse) response;
-		HttpSession ses = req.getSession(false);
+		HttpSession session = req.getSession(false);
 		
 		String reqURI = req.getRequestURI();
+		UserSession user = (session != null) ? (UserSession) session.getAttribute("userSession") : null;
 
+		
 		if (reqURI.endsWith("/login.xhtml")
-				|| (ses != null && ses.getAttribute("loggedIn") != null)) {
+				|| user == null || user.isLoggedIn()) {
 			chain.doFilter(request, response);
 		} else {
 			res.sendRedirect(req.getContextPath() + "/login.xhtml"); 

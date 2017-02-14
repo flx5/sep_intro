@@ -6,7 +6,6 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 
-import sep_intro.jsf.JsfUtil;
 import sep_intro.model.repository.FakeUserRepository;
 import sep_intro.model.repository.UserRepository;
 
@@ -27,7 +26,7 @@ public class Login {
 	private UserSession userSession;
 
 	// TODO Should be injected
-	private UserRepository userRepository = new FakeUserRepository();
+	private UserRepository userRepository =  FakeUserRepository.getInstance();
 	
 	/**
 	 * @return the userName
@@ -68,9 +67,6 @@ public class Login {
 		if(user != null &&
 			user.verifyPassword(this.getPassword())) {
 			this.userSession.setUser(user);
-			
-			JsfUtil.getSession().setAttribute("loggedIn", true);
-			
 			return "profile";
 		}
 		

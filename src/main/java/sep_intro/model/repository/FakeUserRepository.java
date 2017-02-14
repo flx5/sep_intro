@@ -1,22 +1,31 @@
 package sep_intro.model.repository;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import sep_intro.model.User;
 
-public class FakeUserRepository implements UserRepository {
-private static final User[] USERS = { new User("user", "leet"), new User("admin", "1337") };
+public class FakeUserRepository extends AbstractFakeRepository<User, Integer> implements UserRepository {
+	private static final User[] USERS = { 
+			new User("user", "leet"), 
+			new User("admin", "1337") 
+	};
+
+	private static FakeUserRepository instance;
 	
-	private static Map<String, User> users = Arrays
-			.stream(USERS)
-			.collect(Collectors.toMap(x -> x.getUserName(), x -> x));
-
-
-	@Override
-	public User getByUserName(String username) {
-		return users.getOrDefault(username, null);
+	public static FakeUserRepository getInstance() {
+		if(instance == null) {
+			instance = new FakeUserRepository();
+		}
+		
+		return instance;
 	}
 	
+	private static int idGenerator;
+	
+	private FakeUserRepository() {
+		super(x -> x.getId(), x -> x.setId(++idGenerator), USERS);
+	}
+	
+	@Override
+	public User getByUserName(String username) {
+		return getByCondition(x -> x.getUserName().equals(username));
+	}
 }

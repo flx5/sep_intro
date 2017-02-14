@@ -15,15 +15,14 @@ public class User {
 	private static final int HASH_SIZE = 18;
 	private static final int PBKDF2_ITERATIONS = 64000;
 
+	private int id;
 	private String userName;
 	private byte[] passwordHash;
 	private String realName;
-	private Date dateOfBirth;
+	private Date birthday;
+	private Address address;
 
 	private byte[] salt;
-
-	// TODO Address
-	// TODO Update via profile
 
 	public User(String userName, String plainPassword) {
 		this.userName = userName;
@@ -32,6 +31,10 @@ public class User {
 		new SecureRandom().nextBytes(this.salt);
 		
 		this.setPassword(plainPassword);
+
+		this.realName = "";
+		this.setBirthday(new Date());
+		this.address = new Address();
 	}
 
 	public String getUserName() {
@@ -59,12 +62,25 @@ public class User {
 		this.realName = realName;
 	}
 
-	public Date getDateOfBirth() {
-		return dateOfBirth;
+	/**
+	 * @return the address
+	 */
+	public Address getAddress() {
+		return address;
 	}
 
-	public void setDateOfBirth(Date dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
+	/**
+	 * @return the birthday
+	 */
+	public Date getBirthday() {
+		return birthday;
+	}
+
+	/**
+	 * @param birthday the birthday to set
+	 */
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
 	}
 
 	public boolean verifyPassword(String givenPassword) {
@@ -83,5 +99,19 @@ public class User {
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
 	}
 }
