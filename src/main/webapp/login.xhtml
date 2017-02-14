@@ -1,0 +1,21 @@
+<ui:composition template="/WEB-INF/templates/layout.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<ui:define name="title">Login</ui:define>
+	<ui:define name="content">
+		<h:form id="login">
+			<h:messages styleClass="messages" />
+			<h:panelGrid columns="2">
+				<h:outputLabel value="Username:" for="username" />
+				<h:inputText label="Username" id="username" value="#{login.userName}" required="true"></h:inputText>
+				<h:outputLabel value="Password:" for="password" />
+				<h:inputSecret label="Password" id="password" value="#{login.password}"					
+required="true" />
+			</h:panelGrid>
+			<h:commandButton value="Login"
+				action="#{login.login}" />
+		</h:form>
+	</ui:define>
+</ui:composition>
