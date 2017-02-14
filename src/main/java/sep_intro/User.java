@@ -3,8 +3,8 @@ package sep_intro;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.Random;
 
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -21,23 +21,16 @@ public class User {
 	private Date dateOfBirth;
 
 	private byte[] salt;
-	private Random random;
 
 	// TODO Address
 
-	private User() {
-		this.random = new SecureRandom();
-	}
-	
 	public User(String userName, String plainPassword) {
-		this();
-		
 		this.userName = userName;
 		
 		this.salt = new byte[SALT_SIZE];
-		this.random.nextBytes(this.salt);
+		new SecureRandom().nextBytes(this.salt);
 		
-		this.passwordHash = hashPassword(plainPassword, this.salt);
+		this.setPassword(plainPassword);
 	}
 
 	public String getUserName() {
@@ -48,12 +41,13 @@ public class User {
 		this.userName = userName;
 	}
 
-	private byte[] getPassword() {
-		return passwordHash;
-	}
-
 	public void setPassword(String password) {
-		this.passwordHash = hashPassword(password, salt);
+		this.passwordHash = hashPassword(password);
+	}
+	
+	public String getPassword() {
+		// required by JSF...
+		return "";
 	}
 
 	public String getRealName() {
@@ -73,14 +67,14 @@ public class User {
 	}
 
 	public boolean verifyPassword(String givenPassword) {
-		return hashPassword(givenPassword, salt).equals(this.getPassword());
+		return Arrays.equals(hashPassword(givenPassword), this.passwordHash);
 	}
 
-	private byte[] hashPassword(final String password, final byte[] salt) {
+	private byte[] hashPassword(final String password) {
 
 		try {
 			SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
-			PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, PBKDF2_ITERATIONS, HASH_SIZE);
+			PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), this.salt, PBKDF2_ITERATIONS, HASH_SIZE);
 			SecretKey key = skf.generateSecret(spec);
 			byte[] res = key.getEncoded();
 			return res;

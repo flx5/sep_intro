@@ -58,15 +58,17 @@ public class Login {
 		this.userSession = userSession;
 	}
 	
-	public void login() {
+	public String login() {
 		User user = userRepository
 				.getByUserName(this.getUserName());
 		
 		if(user != null &&
 			user.verifyPassword(this.getPassword())) {
 			this.userSession.setUser(user);
+			return "profile.xhtml?faces-redirect=true";
 		}
 		
-		// TODO Redirect / message!
+		// TODO message!
+		return null;
 	}
 }
