@@ -1,17 +1,18 @@
 package sep_intro.model;
 
+import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 
-import sep_intro.model.repository.FakeUserRepository;
+import sep_intro.model.repository.RepositoryFactory;
 import sep_intro.model.repository.UserRepository;
 
-@ManagedBean
+@Named
 @RequestScoped
 public class Login {
+
 	/**
 	 * The username.
 	 */
@@ -22,12 +23,9 @@ public class Login {
 	 */
 	private String password;
 
-	@ManagedProperty(value = "#{userSession}")
+	@Inject
 	private UserSession userSession;
 
-	// TODO Should be injected
-	private UserRepository userRepository =  FakeUserRepository.getInstance();
-	
 	/**
 	 * @return the userName
 	 */
@@ -61,8 +59,11 @@ public class Login {
 	}
 	
 	public String login() {
-		User user = userRepository
-				.getByUserName(this.getUserName());
+		User user;
+		
+		try(UserRepository repo = RepositoryFactory.resolve(UserRepository.class)) {
+			user = repo.getByUserName(this.getUserName());
+		}	
 		
 		if(user != null &&
 			user.verifyPassword(this.getPassword())) {

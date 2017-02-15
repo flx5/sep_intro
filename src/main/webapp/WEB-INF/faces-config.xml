@@ -13,4 +13,5 @@
         <navigation-handler>sep_intro.jsf.RedirectNavigationHandler</navigation-handler>
         
     </application>
+    
 </faces-config>

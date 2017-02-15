@@ -1,19 +1,23 @@
 package sep_intro.model;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import java.io.Serializable;
 
-import sep_intro.model.repository.FakeUserRepository;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
+
+import sep_intro.model.repository.RepositoryFactory;
 import sep_intro.model.repository.UserRepository;
 
-@ManagedBean(eager = true)
+@Named
 @SessionScoped
-public class UserSession {
+public class UserSession implements Serializable {
+	/**
+	 * Serial version id
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private User user;
 	
-	// TODO Should be injected
-	private UserRepository userRepository = FakeUserRepository.getInstance();
-
 	public boolean isLoggedIn() {
 		return this.user != null;
 	}
@@ -32,6 +36,8 @@ public class UserSession {
 	}
 	
 	public void saveUser() {
-		this.userRepository.update(this.user);
+		try(UserRepository repo = RepositoryFactory.resolve(UserRepository.class)) {
+			repo.update(this.user);
+		}
 	}
 }

@@ -6,7 +6,7 @@
 	id="WebApp_ID" version="2.5">
 
 	<context-param>
-		<param-name>facelets.SKIP_COMMENTS</param-name>
+		<param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
 
@@ -53,4 +53,7 @@
 		<url-pattern>*.xhtml</url-pattern>
 	</filter-mapping>
 
+	<listener>
+		<listener-class>org.jboss.weld.environment.servlet.Listener</listener-class>
+	</listener>
 </web-app>
