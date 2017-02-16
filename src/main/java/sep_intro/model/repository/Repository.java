@@ -7,5 +7,7 @@ public interface Repository<T, K> extends AutoCloseable {
 	void deleteById(K id);
 	void delete(T value);
 	
+	void create();
+	void destroy();
 	void close() throws RuntimeException; 
 }

@@ -50,4 +50,14 @@ public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
 	public void delete(T value) {
 		deleteById(getKey(value));
 	}
+
+	@Override
+	public void create() {
+		// do nothing
+	}
+
+	@Override
+	public void destroy() {
+		// do nothing
+	}
 }

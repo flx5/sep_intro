@@ -11,6 +11,10 @@ public class SqlMigrationRepository extends AbstractRepository<MigrationEntry, I
 
 	@Override
 	public MigrationEntry getCurrentVersion() {
+		if(!tableExists("migrations")) {
+			return null;
+		}
+		
 		return queryFirst("SELECT * FROM migrations ORDER BY run_at DESC LIMIT 1");
 	}
 
@@ -62,6 +66,20 @@ public class SqlMigrationRepository extends AbstractRepository<MigrationEntry, I
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public void create() {
+		nonQuery("CREATE TABLE migrations ("
+				+ "id INTEGER NOT NULL PRIMARY KEY AUTO_INREMENT,"
+				+ "version BIGINT NOT NULL,"
+				+ "run_at DATE NOT NULL"
+				+ ")");
+	}
+
+	@Override
+	public void destroy() {
+		nonQuery("DROP TABLE migrations");
 	}
 
 }
