@@ -91,7 +91,7 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 	public void create() {
 		nonQuery("CREATE TABLE users (" +
 				"id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT," +
-				"username VARCHAR(20) NOT NULL," +
+				"username VARCHAR(20) NOT NULL UNIQUE," +
 				"passwordhash VARBINARY("+ User.HASH_SIZE +") NOT NULL," +
 				"realname VARCHAR(20) NOT NULL," +
 				"birthday DATE NOT NULL," +

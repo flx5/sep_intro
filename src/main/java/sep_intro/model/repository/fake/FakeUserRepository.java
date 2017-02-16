@@ -10,7 +10,27 @@ public class FakeUserRepository extends AbstractFakeRepository<User, Integer> im
 	private static ConcurrentMap<Integer, User> storage = new ConcurrentHashMap<>();
 	
 	private static int idGenerator;
-	// TODO Username must be unique
+
+	@Override
+	public void update(User value) {
+		
+		if(getByCondition(x -> x.getUserName().equals(value.getUserName()) 
+				&& x.getId() != value.getId()) != null) {
+			throw new IllegalStateException("Username exists!");
+		}
+		
+		super.update(value);
+	}
+
+	@Override
+	public void insert(User value) {
+		if(getByUserName(value.getUserName()) != null) {
+			throw new IllegalStateException("Username exists!");
+		}
+		
+		super.insert(value);
+	}
+
 	@Override
 	public User getByUserName(String username) {
 		return getByCondition(x -> x.getUserName().equals(username));
