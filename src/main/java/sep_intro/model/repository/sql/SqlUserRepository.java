@@ -85,7 +85,7 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 	public void delete(User value) {
 		deleteById(value.getId());
 	}
-// TODO Username must be unique
+
 	// TODO Validate input lengths!
 	@Override
 	public void create() {
