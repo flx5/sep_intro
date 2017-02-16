@@ -1,9 +1,9 @@
 package sep_intro.model.repository.sql;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 
 import sep_intro.model.Address;
 import sep_intro.model.User;
@@ -24,21 +24,23 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 		nonQuery("UPDATE users SET username = ?, passwordhash = ?, realname = ?, "
 				+ "birthday = ?, salt = ?, street = ?, street_nr = ?, zipcode = ?, "
 				+ "city = ?, country = ? WHERE id = ?",
-				stmt -> populateStatement(stmt, value));
+				stmt -> { 
+					stmt.setInt(11, value.getId());
+					populateStatement(stmt, value);
+				});
 	}
 	
 	private void populateStatement(PreparedStatement stmt, User value) throws SQLException {
 		stmt.setString(1, value.getUserName());
 		stmt.setBytes(2, value.getPasswordHash());
 		stmt.setString(3, value.getRealName());
-		stmt.setObject(4, value.getBirthday());
+		stmt.setDate(4, Date.valueOf(value.getBirthday()));
 		stmt.setBytes(5, value.getSalt());
 		stmt.setString(6, value.getAddress().getStreet());
 		stmt.setInt(7, value.getAddress().getStreetNumber());
 		stmt.setString(8, value.getAddress().getZipcode());
 		stmt.setString(9, value.getAddress().getCity());
 		stmt.setString(10, value.getAddress().getCountry());
-		stmt.setInt(11, value.getId());
 	}
 
 	@Override
@@ -63,7 +65,7 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 			address = new Address(result.getString("street"), result.getInt("street_nr"), result.getString("zipcode"),
 					result.getString("city"), result.getString("country"));
 			return new User(result.getInt("id"), result.getString("username"), result.getBytes("passwordhash"),
-					result.getString("realname"), (LocalDate)result.getObject("birthday"), address, result.getBytes("salt"));
+					result.getString("realname"), result.getDate("birthday").toLocalDate(), address, result.getBytes("salt"));
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

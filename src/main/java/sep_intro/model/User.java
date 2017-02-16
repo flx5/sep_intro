@@ -5,7 +5,6 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Date;
 
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;

@@ -1,18 +1,19 @@
 package sep_intro.model.migrations;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class MigrationEntry {
 	private int id;
 	private long version;
-	private LocalDate runAt;
+	private LocalDateTime runAt;
 	
 	public MigrationEntry() {
 		
 	}
 	
 	public MigrationEntry(long version) {
-		runAt = LocalDate.now();
+		this.version = version;
+		runAt = LocalDateTime.now();
 	}
 	
 	/**
@@ -31,13 +32,13 @@ public class MigrationEntry {
 	/**
 	 * @return the runAt
 	 */
-	public LocalDate getRunAt() {
+	public LocalDateTime getRunAt() {
 		return runAt;
 	}
 	/**
 	 * @param runAt the runAt to set
 	 */
-	public void setRunAt(LocalDate runAt) {
+	public void setRunAt(LocalDateTime runAt) {
 		this.runAt = runAt;
 	}
 	/**

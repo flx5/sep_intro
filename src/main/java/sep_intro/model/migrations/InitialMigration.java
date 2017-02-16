@@ -1,6 +1,5 @@
 package sep_intro.model.migrations;
 
-import sep_intro.model.User;
 import sep_intro.model.repository.MigrationRepository;
 import sep_intro.model.repository.RepositoryFactory;
 import sep_intro.model.repository.UserRepository;
@@ -9,7 +8,7 @@ public class InitialMigration implements Migration {
 
 	@Override
 	public long getId() {
-		return 0;
+		return 1;
 	}
 
 	@Override

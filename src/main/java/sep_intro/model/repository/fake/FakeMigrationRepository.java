@@ -15,7 +15,14 @@ public class FakeMigrationRepository extends AbstractFakeRepository<MigrationEnt
 	@Override
 	public MigrationEntry getCurrentVersion() {
 		return storage.values().stream().max((a,b) -> {
-			return a.getRunAt().compareTo(b.getRunAt());
+			int result = a.getRunAt().compareTo(b.getRunAt());
+			
+			if(result == 0) {
+				result = Integer.compare(a.getId(), b.getId());
+			}
+			
+			return result;
+			
 		}).orElse(null);
 	}
 
