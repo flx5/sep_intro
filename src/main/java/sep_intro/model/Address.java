@@ -26,6 +26,28 @@ public class Address {
 	 */
 	private String country;
 
+	
+	
+	/**
+	 * Create new Address
+	 * @param street The street
+	 * @param streetNumber the street number
+	 * @param zipcode the zip code
+	 * @param city the city
+	 * @param country the country
+	 */
+	public Address(String street, int streetNumber, String zipcode, String city, String country) {
+		this.street = street;
+		this.streetNumber = streetNumber;
+		this.zipcode = zipcode;
+		this.city = city;
+		this.country = country;
+	}
+	
+	public Address() {
+		
+	}
+
 	/**
 	 * @return the street
 	 */

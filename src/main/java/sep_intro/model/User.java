@@ -3,6 +3,7 @@ package sep_intro.model;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -19,7 +20,7 @@ public class User {
 	private String userName;
 	private byte[] passwordHash;
 	private String realName;
-	private Date birthday;
+	private LocalDate birthday;
 	private Address address;
 
 	private byte[] salt;
@@ -33,8 +34,19 @@ public class User {
 		this.setPassword(plainPassword);
 
 		this.realName = "";
-		this.setBirthday(new Date());
+		this.setBirthday(LocalDate.now());
 		this.address = new Address();
+	}
+
+	public User(int id, String userName, byte[] passwordHash, String realName, LocalDate birthday, Address address,
+			byte[] salt) {
+		this.id = id;
+		this.userName = userName;
+		this.passwordHash = passwordHash;
+		this.realName = realName;
+		this.birthday = birthday;
+		this.address = address;
+		this.salt = salt;
 	}
 
 	public String getUserName() {
@@ -52,6 +64,10 @@ public class User {
 	public String getPassword() {
 		// required by JSF...
 		return "";
+	}
+	
+	public byte[] getPasswordHash() {
+		return this.passwordHash;
 	}
 
 	public String getRealName() {
@@ -72,15 +88,19 @@ public class User {
 	/**
 	 * @return the birthday
 	 */
-	public Date getBirthday() {
+	public LocalDate getBirthday() {
 		return birthday;
 	}
 
 	/**
 	 * @param birthday the birthday to set
 	 */
-	public void setBirthday(Date birthday) {
+	public void setBirthday(LocalDate birthday) {
 		this.birthday = birthday;
+	}
+	
+	public byte[] getSalt() {
+		return this.salt;
 	}
 
 	public boolean verifyPassword(String givenPassword) {
