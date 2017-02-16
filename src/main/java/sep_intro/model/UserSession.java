@@ -2,13 +2,13 @@ package sep_intro.model;
 
 import java.io.Serializable;
 
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Named;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 
 import sep_intro.model.repository.RepositoryFactory;
 import sep_intro.model.repository.UserRepository;
 
-@Named
+@ManagedBean(eager = true)
 @SessionScoped
 public class UserSession implements Serializable {
 	/**

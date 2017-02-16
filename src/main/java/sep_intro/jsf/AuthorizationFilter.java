@@ -27,16 +27,18 @@ public class AuthorizationFilter implements Filter {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse res = (HttpServletResponse) response;
 		HttpSession session = req.getSession(false);
-		
+
 		String reqURI = req.getRequestURI();
 		UserSession user = (session != null) ? (UserSession) session.getAttribute("userSession") : null;
 
+		boolean loggedIn = user != null && user.isLoggedIn();
 		
-		if (reqURI.endsWith("/login.xhtml")
-				|| user == null || user.isLoggedIn()) {
-			chain.doFilter(request, response);
+		if (!reqURI.endsWith("/login.xhtml") && !loggedIn) {
+			res.sendRedirect(req.getContextPath() + "/login.xhtml");
+		} else if (loggedIn && reqURI.endsWith("/login.xhtml")) {
+			res.sendRedirect(req.getContextPath() + "/profile.xhtml");
 		} else {
-			res.sendRedirect(req.getContextPath() + "/login.xhtml"); 
+			chain.doFilter(request, response);
 		}
 	}
 

@@ -24,11 +24,11 @@ public class InitialMigration implements Migration {
 
 	@Override
 	public void down() {
-		try(MigrationRepository repo = RepositoryFactory.resolve(MigrationRepository.class)) {
+		try(UserRepository repo = RepositoryFactory.resolve(UserRepository.class)) {
 			repo.destroy();
 		}
 		
-		try(UserRepository repo = RepositoryFactory.resolve(UserRepository.class)) {
+		try(MigrationRepository repo = RepositoryFactory.resolve(MigrationRepository.class)) {
 			repo.destroy();
 		}
 	}

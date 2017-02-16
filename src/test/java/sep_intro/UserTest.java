@@ -6,6 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sep_intro.model.User;
+import sep_intro.model.repository.UserRepository;
+import sep_intro.model.repository.sql.SqlUserRepository;
 
 public class UserTest {
 
@@ -22,5 +24,4 @@ public class UserTest {
 		assertFalse(this.user.verifyPassword("notPassword"));
 		assertFalse(this.user.verifyPassword("password"));
 	}
-
 }

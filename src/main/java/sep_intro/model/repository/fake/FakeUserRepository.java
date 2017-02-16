@@ -10,7 +10,7 @@ public class FakeUserRepository extends AbstractFakeRepository<User, Integer> im
 	private static ConcurrentMap<Integer, User> storage = new ConcurrentHashMap<>();
 	
 	private static int idGenerator;
-
+	// TODO Username must be unique
 	@Override
 	public User getByUserName(String username) {
 		return getByCondition(x -> x.getUserName().equals(username));

@@ -1,15 +1,15 @@
 package sep_intro.model;
 
-import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
-import javax.inject.Inject;
-import javax.inject.Named;
 
 import sep_intro.model.repository.RepositoryFactory;
 import sep_intro.model.repository.UserRepository;
 
-@Named
+@ManagedBean
 @RequestScoped
 public class Login {
 
@@ -23,7 +23,7 @@ public class Login {
 	 */
 	private String password;
 
-	@Inject
+	@ManagedProperty(value="#{userSession}")
 	private UserSession userSession;
 
 	/**

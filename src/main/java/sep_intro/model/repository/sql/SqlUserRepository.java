@@ -20,7 +20,7 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 
 	@Override
 	public void update(User value) {
-		// TODO Try passing array
+		// TODO Should add param names
 		nonQuery("UPDATE users SET username = ?, passwordhash = ?, realname = ?, "
 				+ "birthday = ?, salt = ?, street = ?, street_nr = ?, zipcode = ?, "
 				+ "city = ?, country = ? WHERE id = ?",
@@ -85,16 +85,17 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 	public void delete(User value) {
 		deleteById(value.getId());
 	}
-
+// TODO Username must be unique
+	// TODO Validate input lengths!
 	@Override
 	public void create() {
 		nonQuery("CREATE TABLE users (" +
 				"id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT," +
 				"username VARCHAR(20) NOT NULL," +
-				"passwordhash BINARY(18) NOT NULL," +
+				"passwordhash VARBINARY("+ User.HASH_SIZE +") NOT NULL," +
 				"realname VARCHAR(20) NOT NULL," +
 				"birthday DATE NOT NULL," +
-				"salt BINARY(24) NOT NULL," +
+				"salt BINARY(" + User.SALT_SIZE + ") NOT NULL," +
 				"street VARCHAR(20)," +
 				"street_nr INTEGER," +
 				"zipcode VARCHAR(10)," +

@@ -69,7 +69,7 @@ public class MigrationIndex {
 	}
 
 	private void down(long from, long to) {
-		Collection<Migration> toRun = migrations.descendingMap().subMap(from, false, to, true).values();
+		Collection<Migration> toRun = migrations.descendingMap().subMap(from, true, to, false).values();
 
 		try (MigrationRepository repo = RepositoryFactory.resolve(MigrationRepository.class)) {
 			for (Migration migration : toRun) {

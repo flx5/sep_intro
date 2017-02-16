@@ -11,8 +11,8 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 public class User {
-	private static final int SALT_SIZE = 24;
-	private static final int HASH_SIZE = 18;
+	public static final int SALT_SIZE = 32;
+	public static final int HASH_SIZE = 256;
 	private static final int PBKDF2_ITERATIONS = 64000;
 
 	private int id;
