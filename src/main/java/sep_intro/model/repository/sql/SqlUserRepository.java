@@ -13,17 +13,6 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 
 	@Override
 	public User getById(Integer id) {
-		User user = getByIdOrDefault(id);
-
-		if (user == null) {
-			throw new IllegalStateException("No such user");
-		}
-
-		return user;
-	}
-
-	@Override
-	public User getByIdOrDefault(Integer id) {
 		return queryFirstOrDefault("SELECT * FROM users WHERE id = ?", stmt -> {
 			stmt.setInt(1, id);
 		}, null);
@@ -34,7 +23,7 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 		// TODO Try passing array
 		nonQuery("UPDATE users SET username = ?, passwordhash = ?, realname = ?, "
 				+ "birthday = ?, salt = ?, street = ?, street_nr = ?, zipcode = ?, "
-				+ "city = ?, country = ?",
+				+ "city = ?, country = ? WHERE id = ?",
 				stmt -> populateStatement(stmt, value));
 	}
 	
@@ -49,6 +38,7 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 		stmt.setString(8, value.getAddress().getZipcode());
 		stmt.setString(9, value.getAddress().getCity());
 		stmt.setString(10, value.getAddress().getCountry());
+		stmt.setInt(11, value.getId());
 	}
 
 	@Override
@@ -77,5 +67,20 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public void deleteById(Integer id) {
+		nonQuery("DELETE FROM users WHERE id = ?", x -> x.setInt(1, id));
+	}
+	
+	@Override
+	public void deleteByUsername(String username) {
+		nonQuery("DELETE FROM users WHERE username = ?", x -> x.setString(1, username));
+	}
+
+	@Override
+	public void delete(User value) {
+		deleteById(value.getId());
 	}
 }

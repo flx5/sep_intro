@@ -1,20 +1,16 @@
 package sep_intro.model.repository.fake;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 import sep_intro.model.User;
 import sep_intro.model.repository.UserRepository;
 
 public class FakeUserRepository extends AbstractFakeRepository<User, Integer> implements UserRepository {
-	private static final User[] USERS = { 
-			new User("user", "leet"), 
-			new User("admin", "1337") 
-	};
+	private static ConcurrentMap<Integer, User> storage = new ConcurrentHashMap<>();
 	
 	private static int idGenerator;
-	
-	public FakeUserRepository() {
-		super(USERS);
-	}
-	
+
 	@Override
 	public User getByUserName(String username) {
 		return getByCondition(x -> x.getUserName().equals(username));
@@ -27,6 +23,18 @@ public class FakeUserRepository extends AbstractFakeRepository<User, Integer> im
 
 	@Override
 	protected void setKey(User item) {
-		item.setId(++idGenerator);
+		if(item.getId() == 0) {
+			item.setId(++idGenerator);
+		}
+	}
+
+	@Override
+	protected ConcurrentMap<Integer, User> getStorage() {
+		return storage;
+	}
+
+	@Override
+	public void deleteByUsername(String username) {
+		storage.values().removeIf(x -> x.getUserName().equals(username));
 	}
 }

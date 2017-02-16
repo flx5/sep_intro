@@ -1,35 +1,24 @@
 package sep_intro.model.repository.fake;
 
-import java.util.Arrays;
-import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import sep_intro.model.repository.Repository;
 
 public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
 
-	private Map<K, T> data;
-
-	@SafeVarargs
-	protected AbstractFakeRepository(T... values) {
-		this.data = Arrays.stream(values).collect(Collectors.toMap(x -> {
-			setKey(x);
-			return getKey(x);
-		}, x -> x));
-	}
-	
 	protected abstract K getKey(T item);
 	protected abstract void setKey(T item);
+	protected abstract ConcurrentMap<K, T> getStorage();
 
 	@Override
 	public void update(T value) {
-		this.data.put(getKey(value), value);
+		this.getStorage().put(getKey(value), value);
 	}
 
 	@Override
 	public void insert(T value) {
-		if (this.data.containsKey(getKey(value))) {
+		if (this.getStorage().containsKey(getKey(value))) {
 			throw new IllegalStateException("Value with key exists already!");
 		}
 
@@ -40,20 +29,25 @@ public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
 
 	@Override
 	public T getById(K id) {
-		return data.get(id);
-	}
-
-	@Override
-	public T getByIdOrDefault(K id) {
-		return data.getOrDefault(id, null);
+		return getStorage().get(id);
 	}
 
 	protected T getByCondition(Predicate<T> predicate) {
-		return data.values().stream().filter(predicate).findAny().orElse(null);
+		return getStorage().values().stream().filter(predicate).findAny().orElse(null);
 	}
 	
 	@Override
 	public void close() {
 		// do nothing
+	}
+
+	@Override
+	public void deleteById(K id) {
+		getStorage().remove(id);
+	}
+
+	@Override
+	public void delete(T value) {
+		deleteById(getKey(value));
 	}
 }
