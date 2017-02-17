@@ -22,7 +22,7 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 
 	private final Connection connection;
 	private final String table;
-
+// TODO Replace with NamedPreparedStatement
 	@FunctionalInterface
 	interface ThrowingConsumer<T> extends Consumer<T> {
 		@Override
