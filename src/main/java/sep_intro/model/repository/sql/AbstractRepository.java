@@ -20,7 +20,8 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 	private static final String dbUser = "sep";
 	private static final String dbPassword = "changeme";
 
-	private Connection connection;
+	private final Connection connection;
+	private final String table;
 
 	@FunctionalInterface
 	interface ThrowingConsumer<T> extends Consumer<T> {
@@ -36,13 +37,15 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 		void acceptThrows(T elem) throws Exception;
 	}
 
-	public AbstractRepository() {
+	public AbstractRepository(String table) {
 		try {
 			Class.forName(dbDriver);
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
 
+		this.table = table;
+		
 		try {
 			this.connection = DriverManager.getConnection("jdbc:mysql://" + dbHost + "/" + dbName, dbUser, dbPassword);
 		} catch (SQLException e) {
@@ -112,13 +115,12 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 
 	@Override
 	public void close() throws RuntimeException {
-		if (this.connection != null) {
-			try {
+		try {
+			if (!this.connection.isClosed()) {
 				this.connection.close();
-			} catch (SQLException e) {
-				throw new RuntimeException(e);
 			}
-			this.connection = null;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -132,5 +134,10 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	@Override
+	public void destroy() {
+		nonQuery("DROP TABLE " + table);
 	}
 }

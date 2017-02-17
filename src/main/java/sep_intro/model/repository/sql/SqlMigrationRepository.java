@@ -9,6 +9,10 @@ import sep_intro.model.repository.MigrationRepository;
 
 public class SqlMigrationRepository extends AbstractRepository<MigrationEntry, Integer> implements MigrationRepository {
 
+	public SqlMigrationRepository() {
+		super("migrations");
+	}
+
 	@Override
 	public MigrationEntry getCurrentVersion() {
 		if(!tableExists("migrations")) {
@@ -76,10 +80,4 @@ public class SqlMigrationRepository extends AbstractRepository<MigrationEntry, I
 				+ "run_at TIMESTAMP NOT NULL"
 				+ ")");
 	}
-
-	@Override
-	public void destroy() {
-		nonQuery("DROP TABLE migrations");
-	}
-
 }

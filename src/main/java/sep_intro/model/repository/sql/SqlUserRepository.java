@@ -10,6 +10,9 @@ import sep_intro.model.User;
 import sep_intro.model.repository.UserRepository;
 
 public class SqlUserRepository extends AbstractRepository<User, Integer> implements UserRepository {
+	public SqlUserRepository() {
+		super("users");
+	}
 
 	@Override
 	public User getById(Integer id) {
@@ -23,13 +26,12 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 		// TODO Should add param names
 		nonQuery("UPDATE users SET username = ?, passwordhash = ?, realname = ?, "
 				+ "birthday = ?, salt = ?, street = ?, street_nr = ?, zipcode = ?, "
-				+ "city = ?, country = ? WHERE id = ?",
-				stmt -> { 
+				+ "city = ?, country = ? WHERE id = ?", stmt -> {
 					stmt.setInt(11, value.getId());
 					populateStatement(stmt, value);
 				});
 	}
-	
+
 	private void populateStatement(PreparedStatement stmt, User value) throws SQLException {
 		stmt.setString(1, value.getUserName());
 		stmt.setBytes(2, value.getPasswordHash());
@@ -46,16 +48,15 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 	@Override
 	public void insert(User value) {
 		nonQuery("INSERT INTO users (username, passwordhash, realname, "
-				+ "birthday, salt, street, street_nr, zipcode, "
-				+ "city, country) VALUES (?, ?, ?,?,?,?,?,?,?,?)",
+				+ "birthday, salt, street, street_nr, zipcode, " + "city, country) VALUES (?, ?, ?,?,?,?,?,?,?,?)",
 				stmt -> populateStatement(stmt, value));
 	}
 
 	@Override
 	public User getByUserName(String username) {
-		return queryFirstOrDefault("SELECT * FROM users WHERE username = ?", stmt -> {
+		return queryFirst("SELECT * FROM users WHERE username = ?", stmt -> {
 			stmt.setString(1, username);
-		}, null);
+		});
 	}
 
 	@Override
@@ -65,7 +66,8 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 			address = new Address(result.getString("street"), result.getInt("street_nr"), result.getString("zipcode"),
 					result.getString("city"), result.getString("country"));
 			return new User(result.getInt("id"), result.getString("username"), result.getBytes("passwordhash"),
-					result.getString("realname"), result.getDate("birthday").toLocalDate(), address, result.getBytes("salt"));
+					result.getString("realname"), result.getDate("birthday").toLocalDate(), address,
+					result.getBytes("salt"));
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -75,7 +77,7 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 	public void deleteById(Integer id) {
 		nonQuery("DELETE FROM users WHERE id = ?", x -> x.setInt(1, id));
 	}
-	
+
 	@Override
 	public void deleteByUsername(String username) {
 		nonQuery("DELETE FROM users WHERE username = ?", x -> x.setString(1, username));
@@ -89,24 +91,10 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 	// TODO Validate input lengths!
 	@Override
 	public void create() {
-		nonQuery("CREATE TABLE users (" +
-				"id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT," +
-				"username VARCHAR(20) NOT NULL UNIQUE," +
-				"passwordhash VARBINARY("+ User.HASH_SIZE +") NOT NULL," +
-				"realname VARCHAR(20) NOT NULL," +
-				"birthday DATE NOT NULL," +
-				"salt BINARY(" + User.SALT_SIZE + ") NOT NULL," +
-				"street VARCHAR(20)," +
-				"street_nr INTEGER," +
-				"zipcode VARCHAR(10)," +
-				"city VARCHAR(20)," +
-				"country VARCHAR(20)" +
-				")");
-	}
-
-	@Override
-	public void destroy() {
-		// TODO Push to base class
-		nonQuery("DROP TABLE users");
+		nonQuery("CREATE TABLE users (" + "id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,"
+				+ "username VARCHAR(20) NOT NULL UNIQUE," + "passwordhash VARBINARY(" + User.HASH_SIZE + ") NOT NULL,"
+				+ "realname VARCHAR(20) NOT NULL," + "birthday DATE NOT NULL," + "salt BINARY(" + User.SALT_SIZE
+				+ ") NOT NULL," + "street VARCHAR(20)," + "street_nr INTEGER," + "zipcode VARCHAR(10),"
+				+ "city VARCHAR(20)," + "country VARCHAR(20)" + ")");
 	}
 }
