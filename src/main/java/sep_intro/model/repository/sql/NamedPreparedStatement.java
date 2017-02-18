@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,10 +46,10 @@ class NamedPreparedStatement implements AutoCloseable {
 			} else if (c == '\'' || c == '"') {
 				inQuotes = true;
 				quoteChar = c;
-			} else if (c == ':' && i + 1 < length && Character.isLetter(query.charAt(i + 1))) {
+			} else if (c == ':' && i + 1 < length && Character.isJavaIdentifierStart(query.charAt(i + 1))) {
 
 				int j = i + 2;
-				while (j < length && Character.isLetter(query.charAt(j))) {
+				while (j < length && Character.isJavaIdentifierPart(query.charAt(j))) {
 					// walk j to end of identifier
 					++j;
 				}
@@ -97,7 +98,7 @@ class NamedPreparedStatement implements AutoCloseable {
 			statement.setString(index, value);
 		}
 	}
-	
+
 	public void setInt(String name, int value) throws SQLException {
 		for (int index : getIndexes(name)) {
 			statement.setInt(index, value);
@@ -109,13 +110,29 @@ class NamedPreparedStatement implements AutoCloseable {
 			statement.setLong(index, value);
 		}
 	}
-	
+
 	public void setDate(String name, Date value) throws SQLException {
 		for (int index : getIndexes(name)) {
 			statement.setDate(index, value);
 		}
 	}
 	
+	public void setDate(String name, LocalDate value) throws SQLException {
+		setDate(name, Date.valueOf(value));
+	}
+
+	public void setBytes(String name, byte[] value) throws SQLException {
+		for (int index : getIndexes(name)) {
+			statement.setBytes(index, value);
+		}
+	}
+	
+	public void setTimestamp(String name, Timestamp value) throws SQLException {
+		for (int index : getIndexes(name)) {
+			statement.setTimestamp(index, value);
+		}
+	}
+
 	public boolean execute() throws SQLException {
 		return statement.execute();
 	}
@@ -129,7 +146,7 @@ class NamedPreparedStatement implements AutoCloseable {
 	}
 
 	@Override
-	public void close() throws Exception {
+	public void close() throws SQLException {
 		statement.close();
 	}
 

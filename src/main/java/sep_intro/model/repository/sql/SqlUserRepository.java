@@ -1,7 +1,5 @@
 package sep_intro.model.repository.sql;
 
-import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -16,46 +14,45 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 
 	@Override
 	public User getById(Integer id) {
-		return queryFirstOrDefault("SELECT * FROM users WHERE id = ?", stmt -> {
-			stmt.setInt(1, id);
+		return queryFirstOrDefault("SELECT * FROM users WHERE id = :id", stmt -> {
+			stmt.setInt("id", id);
 		}, null);
 	}
 
 	@Override
 	public void update(User value) {
-		// TODO Should add param names
-		nonQuery("UPDATE users SET username = ?, passwordhash = ?, realname = ?, "
-				+ "birthday = ?, salt = ?, street = ?, street_nr = ?, zipcode = ?, "
-				+ "city = ?, country = ? WHERE id = ?", stmt -> {
-					stmt.setInt(11, value.getId());
+		nonQuery("UPDATE users SET username = :username, passwordhash = :password" + ", realname = :realname, "
+				+ "birthday = :birthday, salt = :salt, street = :street, street_nr = :streetnr, zipcode = :zipcode, "
+				+ "city = :city, country = :country WHERE id = :id", stmt -> {
+					stmt.setInt("id", value.getId());
 					populateStatement(stmt, value);
 				});
 	}
 
-	private void populateStatement(PreparedStatement stmt, User value) throws SQLException {
-		stmt.setString(1, value.getUserName());
-		stmt.setBytes(2, value.getPasswordHash());
-		stmt.setString(3, value.getRealName());
-		stmt.setDate(4, Date.valueOf(value.getBirthday()));
-		stmt.setBytes(5, value.getSalt());
-		stmt.setString(6, value.getAddress().getStreet());
-		stmt.setInt(7, value.getAddress().getStreetNumber());
-		stmt.setString(8, value.getAddress().getZipcode());
-		stmt.setString(9, value.getAddress().getCity());
-		stmt.setString(10, value.getAddress().getCountry());
+	private void populateStatement(NamedPreparedStatement stmt, User value) throws SQLException {
+		stmt.setString("username", value.getUserName());
+		stmt.setBytes("password", value.getPasswordHash());
+		stmt.setString("realname", value.getRealName());
+		stmt.setDate("birthday", value.getBirthday());
+		stmt.setBytes("salt", value.getSalt());
+		stmt.setString("street", value.getAddress().getStreet());
+		stmt.setInt("streetnr", value.getAddress().getStreetNumber());
+		stmt.setString("zipcode", value.getAddress().getZipcode());
+		stmt.setString("city", value.getAddress().getCity());
+		stmt.setString("country", value.getAddress().getCountry());
 	}
 
 	@Override
 	public void insert(User value) {
-		nonQuery("INSERT INTO users (username, passwordhash, realname, "
-				+ "birthday, salt, street, street_nr, zipcode, " + "city, country) VALUES (?, ?, ?,?,?,?,?,?,?,?)",
+		nonQuery("INSERT INTO users (username, passwordhash, realname, birthday, salt, street, street_nr, zipcode, city, country)"
+				+ " VALUES (:username, :password, :realname, :birthday, :salt, :street, :streetnr, :zipcode, :city, :country)",
 				stmt -> populateStatement(stmt, value));
 	}
 
 	@Override
 	public User getByUserName(String username) {
-		return queryFirst("SELECT * FROM users WHERE username = ?", stmt -> {
-			stmt.setString(1, username);
+		return queryFirst("SELECT * FROM users WHERE username = :username", stmt -> {
+			stmt.setString("username", username);
 		});
 	}
 
@@ -75,12 +72,12 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 
 	@Override
 	public void deleteById(Integer id) {
-		nonQuery("DELETE FROM users WHERE id = ?", x -> x.setInt(1, id));
+		nonQuery("DELETE FROM users WHERE id = :id", x -> x.setInt("id", id));
 	}
 
 	@Override
 	public void deleteByUsername(String username) {
-		nonQuery("DELETE FROM users WHERE username = ?", x -> x.setString(1, username));
+		nonQuery("DELETE FROM users WHERE username = :username", x -> x.setString("username", username));
 	}
 
 	@Override
@@ -88,7 +85,6 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 		deleteById(value.getId());
 	}
 
-	// TODO Validate input lengths!
 	@Override
 	public void create() {
 		nonQuery("CREATE TABLE users (" + "id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,"

@@ -3,7 +3,6 @@ package sep_intro.model.repository.sql;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 
 	private final Connection connection;
 	private final String table;
-// TODO Replace with NamedPreparedStatement
+
 	@FunctionalInterface
 	interface ThrowingConsumer<T> extends Consumer<T> {
 		@Override
@@ -58,8 +57,8 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 		});
 	}
 
-	protected int nonQuery(String sql, ThrowingConsumer<PreparedStatement> setValues) {
-		try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
+	protected int nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement> setValues) {
+		try (NamedPreparedStatement stmt = new NamedPreparedStatement(this.connection, sql)) {
 			setValues.accept(stmt);
 			return stmt.executeUpdate();
 		} catch (SQLException e) {
@@ -69,8 +68,8 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 
 	protected abstract T toItem(ResultSet result);
 
-	protected List<T> queryAll(String sql, ThrowingConsumer<PreparedStatement> setValues) {
-		try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
+	protected List<T> queryAll(String sql, ThrowingConsumer<NamedPreparedStatement> setValues) {
+		try (NamedPreparedStatement stmt = new NamedPreparedStatement(this.connection, sql)) {
 			ResultSet result = query(stmt, setValues);
 
 			List<T> values = new ArrayList<>();
@@ -86,7 +85,7 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 		}
 	}
 
-	private ResultSet query(PreparedStatement stmt, ThrowingConsumer<PreparedStatement> setValues) throws SQLException {
+	private ResultSet query(NamedPreparedStatement stmt, ThrowingConsumer<NamedPreparedStatement> setValues) throws SQLException {
 		setValues.accept(stmt);
 		return stmt.executeQuery();
 	}
@@ -96,12 +95,12 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 		}, null);
 	}
 
-	protected T queryFirst(String sql, ThrowingConsumer<PreparedStatement> setValues) {
+	protected T queryFirst(String sql, ThrowingConsumer<NamedPreparedStatement> setValues) {
 		return queryFirstOrDefault(sql, setValues, null);
 	}
 
-	protected T queryFirstOrDefault(String sql, ThrowingConsumer<PreparedStatement> setValues, T defaultValue) {
-		try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
+	protected T queryFirstOrDefault(String sql, ThrowingConsumer<NamedPreparedStatement> setValues, T defaultValue) {
+		try (NamedPreparedStatement stmt = new NamedPreparedStatement(this.connection, sql)) {
 			ResultSet result = query(stmt, setValues);
 			if (result.first()) {
 				return toItem(result);
