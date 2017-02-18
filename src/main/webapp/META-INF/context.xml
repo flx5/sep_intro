@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Context>
 <Context>
 	<Resource name="BeanManager" auth="Container"
 		type="javax.enterprise.inject.spi.BeanManager" factory="org.jboss.weld.resources.ManagerObjectFactory" />
+
+	<Resource name="jdbc/sep" auth="Container" type="javax.sql.DataSource"
+		maxActive="100" maxIdle="30" maxWaitMillis="10000" username="sep"
+		password="changeme" driverClassName="com.mysql.cj.jdbc.Driver"
+		url="jdbc:mysql://localhost:3306/sep" />
 </Context>

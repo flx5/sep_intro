@@ -123,7 +123,7 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 	
 	public void setConfig(Config config) {
 		try {
-			this.connection = config.getDbConfig().getConnection();
+			this.connection = config.getDataSource().getConnection();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

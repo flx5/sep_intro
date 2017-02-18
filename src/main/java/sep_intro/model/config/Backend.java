@@ -4,7 +4,7 @@ import sep_intro.model.repository.Repository;
 
 public enum Backend {
 	Fake,
-	MySql;
+	Sql;
 	
 	private static final String REPOSITORY_PACKAGE_PREFIX = Repository.class.getPackage().getName();
 	

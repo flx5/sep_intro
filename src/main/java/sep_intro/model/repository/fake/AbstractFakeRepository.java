@@ -4,6 +4,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 
 import sep_intro.model.config.Config;
+import sep_intro.model.migrations.MigrationIndex;
 import sep_intro.model.repository.Repository;
 
 public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
@@ -11,7 +12,9 @@ public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
 	protected abstract K getKey(T item);
 	protected abstract void setKey(T item);
 	protected abstract ConcurrentMap<K, T> getStorage();
-
+	
+	private static boolean wasInitialized = false;
+	
 	@Override
 	public void update(T value) {
 		this.getStorage().put(getKey(value), value);
@@ -64,6 +67,10 @@ public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
 	
 	@Override
 	public void setConfig(Config config) {
-		// nothing to do here
+		// Hack to make sure the fake 'database' has been initialized.
+		if(!wasInitialized) {
+			wasInitialized = true;
+			new MigrationIndex(config).migrateToLatest();
+		}
 	}
 }

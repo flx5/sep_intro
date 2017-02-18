@@ -19,7 +19,7 @@ public class UserSession implements Serializable {
 
 	private User user;
 	
-	@ManagedProperty(value = "#{config}")
+	@ManagedProperty(value = "#{appConfig}")
 	private Config config;
 	
 	public boolean isLoggedIn() {

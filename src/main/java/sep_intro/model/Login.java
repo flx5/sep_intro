@@ -13,7 +13,7 @@ import sep_intro.model.repository.UserRepository;
 @RequestScoped
 public class Login {
 
-	@ManagedProperty(value = "#{config}")
+	@ManagedProperty(value = "#{appConfig}")
 	private Config config;
 	
 	/**

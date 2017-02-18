@@ -1,53 +1,47 @@
 package sep_intro.model.config;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
-import org.jboss.weld.resources.spi.ResourceLoadingException;
+import com.sun.faces.config.ConfigurationException;
 
 import sep_intro.model.repository.Repository;
 import sep_intro.util.EnumUtil;
 
-@ManagedBean(eager = true)
+@ManagedBean(eager = true, name = "appConfig")
 @ApplicationScoped
 public class Config {
-	private static final String CONFIG_FILE = "config.properties";
-	
-	private DatabaseConfig dbConfig;
 	private Backend backend;
 	private String repositoryPrefix;
 	
+	private DataSource dataSource;
+	
 	public Config() throws IOException {
 		reload();
-	}
-	
-	public DatabaseConfig getDbConfig() {
-		return dbConfig;
 	}
 	
 	public Backend getBackend() {
 		return backend;
 	}
 	
+	public DataSource getDataSource() {
+		return dataSource;
+	}
+	
 	public void reload() throws IOException {
-		Properties properties = new Properties();
+		ExternalContext context = FacesContext
+			    .getCurrentInstance().getExternalContext();
 		
-		// TODO Should this be loaded from disk instead of Resources?
-		try(InputStream stream = Config.class.getResourceAsStream(CONFIG_FILE)) {
-			if(stream == null) {
-				throw new ResourceLoadingException("Config file missing!");
-			}
-			
-			properties.load(stream);
-		}
-		
-		String backendName = properties.getProperty("backend", "fake");
+		String backendName = context.getInitParameter("sep.BACKEND");
+
 		this.backend = EnumUtil.lookup(Backend.class, backendName);
 		
 		if(this.backend == null) {
@@ -56,7 +50,12 @@ public class Config {
 		
 		this.repositoryPrefix = backend.getRepositoryPrefix();
 		
-		this.dbConfig = new DatabaseConfig(properties);
+		try {
+			Context ctx = new InitialContext();
+			this.dataSource = (DataSource)ctx.lookup("java:comp/env/jdbc/sep");
+		} catch (NamingException e) {
+			throw new ConfigurationException(e);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
