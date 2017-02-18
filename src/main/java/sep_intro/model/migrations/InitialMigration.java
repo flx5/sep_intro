@@ -1,7 +1,7 @@
 package sep_intro.model.migrations;
 
+import sep_intro.model.config.Config;
 import sep_intro.model.repository.MigrationRepository;
-import sep_intro.model.repository.RepositoryFactory;
 import sep_intro.model.repository.UserRepository;
 
 public class InitialMigration implements Migration {
@@ -12,23 +12,23 @@ public class InitialMigration implements Migration {
 	}
 
 	@Override
-	public void up() {
-		try(MigrationRepository repo = RepositoryFactory.resolve(MigrationRepository.class)) {
+	public void up(Config config) {
+		try(MigrationRepository repo = config.getRepository(MigrationRepository.class)) {
 			repo.create();
 		}
 		
-		try(UserRepository repo = RepositoryFactory.resolve(UserRepository.class)) {
+		try(UserRepository repo = config.getRepository(UserRepository.class)) {
 			repo.create();
 		}
 	}
 
 	@Override
-	public void down() {
-		try(UserRepository repo = RepositoryFactory.resolve(UserRepository.class)) {
+	public void down(Config config) {
+		try(UserRepository repo = config.getRepository(UserRepository.class)) {
 			repo.destroy();
 		}
 		
-		try(MigrationRepository repo = RepositoryFactory.resolve(MigrationRepository.class)) {
+		try(MigrationRepository repo = config.getRepository(MigrationRepository.class)) {
 			repo.destroy();
 		}
 	}

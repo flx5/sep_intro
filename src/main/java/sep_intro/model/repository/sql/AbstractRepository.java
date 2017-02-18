@@ -2,24 +2,17 @@ package sep_intro.model.repository.sql;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import sep_intro.model.config.Config;
 import sep_intro.model.repository.Repository;
 
 public abstract class AbstractRepository<T, K> implements Repository<T, K> {
-	// TODO Move to config
-	private static final String dbDriver = "com.mysql.jdbc.Driver";
-	private static final String dbHost = "localhost";
-	private static final String dbName = "sep";
-	private static final String dbUser = "sep";
-	private static final String dbPassword = "changeme";
-
-	private final Connection connection;
+	private Connection connection;
 	private final String table;
 
 	@FunctionalInterface
@@ -37,19 +30,7 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 	}
 
 	public AbstractRepository(String table) {
-		try {
-			Class.forName(dbDriver);
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
-		}
-
 		this.table = table;
-		
-		try {
-			this.connection = DriverManager.getConnection("jdbc:mysql://" + dbHost + "/" + dbName, dbUser, dbPassword);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	protected int nonQuery(String sql) {
@@ -138,5 +119,13 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 	@Override
 	public void destroy() {
 		nonQuery("DROP TABLE " + table);
+	}
+	
+	public void setConfig(Config config) {
+		try {
+			this.connection = config.getDbConfig().getConnection();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

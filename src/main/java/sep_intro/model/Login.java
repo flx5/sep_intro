@@ -6,13 +6,16 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 
-import sep_intro.model.repository.RepositoryFactory;
+import sep_intro.model.config.Config;
 import sep_intro.model.repository.UserRepository;
 
 @ManagedBean
 @RequestScoped
 public class Login {
 
+	@ManagedProperty(value = "#{config}")
+	private Config config;
+	
 	/**
 	 * The username.
 	 */
@@ -58,10 +61,14 @@ public class Login {
 		this.userSession = userSession;
 	}
 	
+	public void setConfig(Config config) {
+		this.config = config;
+	}
+	
 	public String login() {
 		User user;
 		
-		try(UserRepository repo = RepositoryFactory.resolve(UserRepository.class)) {
+		try(UserRepository repo = config.getRepository(UserRepository.class)) {
 			user = repo.getByUserName(this.getUserName());
 		}	
 		

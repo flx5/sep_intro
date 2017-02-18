@@ -4,14 +4,16 @@ import java.util.Collection;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
+import sep_intro.model.config.Config;
 import sep_intro.model.repository.MigrationRepository;
-import sep_intro.model.repository.RepositoryFactory;
 
 public class MigrationIndex {
 	private NavigableMap<Long, Migration> migrations;
+	private Config config;
 
-	public MigrationIndex() {
-		migrations = new TreeMap<Long, Migration>();
+	public MigrationIndex(Config config) {
+		this.config = config;
+		this.migrations = new TreeMap<Long, Migration>();
 
 		add(new InitialMigration());
 		add(new UserTestMigration());
@@ -22,7 +24,7 @@ public class MigrationIndex {
 	}
 
 	private long getCurrentVersion() {
-		try (MigrationRepository repo = RepositoryFactory.resolve(MigrationRepository.class)) {
+		try (MigrationRepository repo = config.getRepository(MigrationRepository.class)) {
 			MigrationEntry current = repo.getCurrentVersion();
 
 			if (current == null) {
@@ -59,9 +61,9 @@ public class MigrationIndex {
 
 		Collection<Migration> toRun = migrations.subMap(from, false, to, true).values();
 
-		try (MigrationRepository repo = RepositoryFactory.resolve(MigrationRepository.class)) {
+		try (MigrationRepository repo = config.getRepository(MigrationRepository.class)) {
 			for (Migration migration : toRun) {
-				migration.up();
+				migration.up(config);
 
 				repo.insert(new MigrationEntry(migration.getId()));
 			}
@@ -71,9 +73,9 @@ public class MigrationIndex {
 	private void down(long from, long to) {
 		Collection<Migration> toRun = migrations.descendingMap().subMap(from, true, to, false).values();
 
-		try (MigrationRepository repo = RepositoryFactory.resolve(MigrationRepository.class)) {
+		try (MigrationRepository repo = config.getRepository(MigrationRepository.class)) {
 			for (Migration migration : toRun) {
-				migration.down();
+				migration.down(config);
 				repo.insert(new MigrationEntry(migration.getId()));
 			}
 		}

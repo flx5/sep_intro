@@ -3,6 +3,7 @@ package sep_intro.model.repository.fake;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 
+import sep_intro.model.config.Config;
 import sep_intro.model.repository.Repository;
 
 public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
@@ -59,5 +60,10 @@ public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
 	@Override
 	public void destroy() {
 		// do nothing
+	}
+	
+	@Override
+	public void setConfig(Config config) {
+		// nothing to do here
 	}
 }
