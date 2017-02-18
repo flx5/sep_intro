@@ -57,10 +57,6 @@
 		<filter-name>AuthorizationFilter</filter-name>
 		<url-pattern>*.xhtml</url-pattern>
 	</filter-mapping>
-
-	<listener>
-		<listener-class>org.jboss.weld.environment.servlet.Listener</listener-class>
-	</listener>
 	
 	<resource-ref>
       <description>DB Connection</description>
