@@ -15,11 +15,15 @@
 			<h:panelGrid columns="2">
 				<h:outputLabel value="Username:" for="username" />
 				<h:inputText label="Username" id="username"
-					value="#{userSession.user.userName}" required="true" />
+					value="#{userSession.user.userName}" required="true">
+					<f:validateLength minimum="3" maximum="20" />
+				</h:inputText>
 
 				<h:outputLabel value="Real name:" for="realName" />
 				<h:inputText label="Real name" id="realName"
-					value="#{userSession.user.realName}" required="false" />
+					value="#{userSession.user.realName}" required="false">
+					<f:validateLength minimum="0" maximum="20" />
+				</h:inputText>
 
 				<h:outputLabel value="Birthday:" for="birthday" />
 				<h:inputText label="Birthday" id="birthday"
@@ -28,19 +32,26 @@
 
 				<h:outputLabel value="Country:" for="country" />
 				<h:inputText label="Country" id="country"
-					value="#{userSession.user.address.country}" required="false" />
+					value="#{userSession.user.address.country}" required="false">
+					<f:validateLength minimum="0" maximum="20" />
+				</h:inputText>
 
 				<h:outputLabel value="Postal code:" for="zipcode" />
 				<h:inputText label="Postal code" id="zipcode"
-					value="#{userSession.user.address.zipcode}" required="false" />
-
+					value="#{userSession.user.address.zipcode}" required="false" >
+					<f:validateLength minimum="0" maximum="10" />
+				</h:inputText>
 				<h:outputLabel value="City:" for="city" />
 				<h:inputText label="City" id="city"
-					value="#{userSession.user.address.city}" required="false" />
+					value="#{userSession.user.address.city}" required="false" >
+					<f:validateLength minimum="0" maximum="20" />
+				</h:inputText>
 
 				<h:outputLabel value="Street:" for="street" />
 				<h:inputText label="Street" id="street"
-					value="#{userSession.user.address.street}" required="false" />
+					value="#{userSession.user.address.street}" required="false" >
+					<f:validateLength minimum="0" maximum="20" />
+				</h:inputText>
 
 				<h:outputLabel value="Streetnumber:" for="streetnr" />
 				<h:inputText type="number" label="Streetnumber" id="streetnr"
