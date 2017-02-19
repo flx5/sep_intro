@@ -10,7 +10,7 @@
         <locale-config>
             <default-locale>en</default-locale>
         </locale-config>
-        <navigation-handler>sep_intro.jsf.RedirectNavigationHandler</navigation-handler>
+        <navigation-handler>de.unipassau.prassefe.sepintro.jsf.RedirectNavigationHandler</navigation-handler>
         
     </application>
     

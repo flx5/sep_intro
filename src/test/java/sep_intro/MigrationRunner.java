@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import sep_intro.model.config.Config;
-import sep_intro.model.migrations.MigrationIndex;
+import de.unipassau.prassefe.sepintro.model.config.Config;
+import de.unipassau.prassefe.sepintro.model.migrations.MigrationIndex;
 
 public class MigrationRunner {
 

@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import sep_intro.model.User;
+import de.unipassau.prassefe.sepintro.model.User;
 
 public class UserTest {
 

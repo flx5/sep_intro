@@ -51,7 +51,7 @@
 
 	<filter>
 		<filter-name>AuthorizationFilter</filter-name>
-		<filter-class>sep_intro.jsf.AuthorizationFilter</filter-class>
+		<filter-class>de.unipassau.prassefe.sepintro.jsf.AuthorizationFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>AuthorizationFilter</filter-name>
