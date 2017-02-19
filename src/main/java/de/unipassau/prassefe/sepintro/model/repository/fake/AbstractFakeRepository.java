@@ -8,13 +8,12 @@ import de.unipassau.prassefe.sepintro.model.migrations.MigrationIndex;
 import de.unipassau.prassefe.sepintro.model.repository.Repository;
 
 public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
-
+	private static boolean wasInitialized = false;
+	
 	protected abstract K getKey(T item);
 	protected abstract void setKey(T item);
 	protected abstract ConcurrentMap<K, T> getStorage();
-	
-	private static boolean wasInitialized = false;
-	
+
 	@Override
 	public void update(T value) {
 		this.getStorage().put(getKey(value), value);
@@ -27,7 +26,7 @@ public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
 		}
 
 		setKey(value);
-		
+
 		this.update(value);
 	}
 
@@ -39,7 +38,7 @@ public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
 	protected T getByCondition(Predicate<T> predicate) {
 		return getStorage().values().stream().filter(predicate).findAny().orElse(null);
 	}
-	
+
 	@Override
 	public void close() {
 		// do nothing
@@ -64,13 +63,17 @@ public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
 	public void destroy() {
 		// do nothing
 	}
-	
-	@Override
-	public void setConfig(Config config) {
+
+	private static synchronized void initialize(Config config) {
 		// Hack to make sure the fake 'database' has been initialized.
-		if(!wasInitialized) {
+		if (!wasInitialized) {
 			wasInitialized = true;
 			new MigrationIndex(config).migrateToLatest();
 		}
+	}
+
+	@Override
+	public void setConfig(Config config) {
+		initialize(config);
 	}
 }

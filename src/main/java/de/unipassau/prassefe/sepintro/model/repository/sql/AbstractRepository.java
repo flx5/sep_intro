@@ -34,13 +34,14 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 	}
 
 	protected int nonQuery(String sql) {
-		return nonQuery(sql, x -> {
-		});
+		return nonQuery(sql, null);
 	}
 
 	protected int nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement> setValues) {
 		try (NamedPreparedStatement stmt = new NamedPreparedStatement(this.connection, sql)) {
-			setValues.accept(stmt);
+			if (setValues != null) {
+				setValues.accept(stmt);
+			}
 			return stmt.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -66,14 +67,18 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 		}
 	}
 
-	private ResultSet query(NamedPreparedStatement stmt, ThrowingConsumer<NamedPreparedStatement> setValues) throws SQLException {
-		setValues.accept(stmt);
+	private ResultSet query(NamedPreparedStatement stmt, ThrowingConsumer<NamedPreparedStatement> setValues)
+			throws SQLException {
+
+		if (setValues != null) {
+			setValues.accept(stmt);
+		}
+		
 		return stmt.executeQuery();
 	}
 
 	protected T queryFirst(String sql) {
-		return queryFirstOrDefault(sql, x -> {
-		}, null);
+		return queryFirstOrDefault(sql, null, null);
 	}
 
 	protected T queryFirst(String sql, ThrowingConsumer<NamedPreparedStatement> setValues) {
@@ -94,7 +99,7 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 	}
 
 	@Override
-	public void close() throws RuntimeException {
+	public void close() {
 		try {
 			if (!this.connection.isClosed()) {
 				this.connection.close();
@@ -115,12 +120,12 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	@Override
 	public void destroy() {
 		nonQuery("DROP TABLE " + table);
 	}
-	
+
 	public void setConfig(Config config) {
 		try {
 			this.connection = config.getDataSource().getConnection();

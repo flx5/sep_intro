@@ -112,8 +112,7 @@ public class User {
 			SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
 			PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), this.salt, PBKDF2_ITERATIONS, HASH_SIZE);
 			SecretKey key = skf.generateSecret(spec);
-			byte[] res = key.getEncoded();
-			return res;
+			return key.getEncoded();
 
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			throw new RuntimeException(e);

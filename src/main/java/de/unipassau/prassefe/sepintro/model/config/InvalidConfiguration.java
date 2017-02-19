@@ -6,4 +6,8 @@ public class InvalidConfiguration extends RuntimeException {
 	public InvalidConfiguration(String message) {
 		super(message);
 	}
+
+	public InvalidConfiguration(Throwable cause) {
+		super(cause);
+	}
 }

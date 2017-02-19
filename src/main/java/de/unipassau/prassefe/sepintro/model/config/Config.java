@@ -11,8 +11,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import com.sun.faces.config.ConfigurationException;
-
 import de.unipassau.prassefe.sepintro.model.repository.Repository;
 import de.unipassau.prassefe.sepintro.util.EnumUtil;
 
@@ -56,7 +54,7 @@ public class Config {
 			Context ctx = new InitialContext();
 			this.dataSource = (DataSource)ctx.lookup("java:comp/env/jdbc/sep");
 		} catch (NamingException e) {
-			throw new ConfigurationException(e);
+			throw new InvalidConfiguration(e);
 		}
 	}
 	
