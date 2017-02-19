@@ -2,6 +2,7 @@ package de.unipassau.prassefe.sepintro.jsf;
 
 import java.io.IOException;
 
+import javax.faces.application.ResourceHandler;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -32,6 +33,12 @@ public class AuthorizationFilter implements Filter {
 		HttpServletResponse res = (HttpServletResponse) response;
 		HttpSession session = req.getSession(false);
 
+		boolean isResourceRequest = req.getRequestURI().startsWith(req.getContextPath() + ResourceHandler.RESOURCE_IDENTIFIER + "/");
+		
+		if(isResourceRequest) {
+			chain.doFilter(request, response);
+			return;
+		}
 		
 		UserSession user = (session != null) ? (UserSession) session.getAttribute("userSession") : null;
 
