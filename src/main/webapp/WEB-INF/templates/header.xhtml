@@ -14,13 +14,13 @@
 		<h:form>
 			<div id="navbar" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
-					<ui:repeat value="#{app.menu}" var="page">
+					<ui:repeat value="#{userSession.menu}" var="page">
 						<li class="#{view.viewId == page.viewId ? 'active' : ''}"><h:link
 								value="#{page.title}" outcome="#{page.viewId}" /></li>
 					</ui:repeat>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
-					<li><h:commandLink rendered="#{userSession.loggedIn}"
+					<li class="#{view.viewId == pageAdapter.lookup('LOGIN').viewId ? 'active' : ''}"><h:commandLink rendered="#{userSession.loggedIn}"
 							action="#{userSession.logout}" value="Logout" /> <h:link
 							rendered="#{!userSession.loggedIn}" outcome="#{pageAdapter.lookup('LOGIN').viewId}"
 							value="Login" /></li>

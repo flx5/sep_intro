@@ -48,4 +48,8 @@ public class UserSession implements Serializable {
 			repo.update(this.user);
 		}
 	}
+	
+	public Page[] getMenu() {
+		return Page.getMenu(this);
+	}
 }
