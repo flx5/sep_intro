@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSession;
 import de.unipassau.prassefe.sepintro.model.UserSession;
 
 public class AuthorizationFilter implements Filter {
-
+// TODO Refer to pages enum
 	private static final String LOGIN_URL = "/login.xhtml";
 	private static final String PROFILE_URL = "/profile.xhtml";
 	
@@ -32,13 +32,6 @@ public class AuthorizationFilter implements Filter {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse res = (HttpServletResponse) response;
 		HttpSession session = req.getSession(false);
-
-		boolean isResourceRequest = req.getRequestURI().startsWith(req.getContextPath() + ResourceHandler.RESOURCE_IDENTIFIER + "/");
-		
-		if(isResourceRequest) {
-			chain.doFilter(request, response);
-			return;
-		}
 		
 		UserSession user = (session != null) ? (UserSession) session.getAttribute("userSession") : null;
 

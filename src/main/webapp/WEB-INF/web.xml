@@ -16,7 +16,7 @@
 	</context-param>
 
 	<welcome-file-list>
-		<welcome-file>faces/login.xhtml</welcome-file>
+		<welcome-file>faces/index.xhtml</welcome-file>
 	</welcome-file-list>
 
 	<!-- FacesServlet is main servlet responsible to handle all request. It 
@@ -55,7 +55,7 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>AuthorizationFilter</filter-name>
-		<url-pattern>*.xhtml</url-pattern>
+		<url-pattern>/user/*</url-pattern>
 	</filter-mapping>
 	
 	<resource-ref>
