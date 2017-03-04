@@ -10,7 +10,7 @@ public class FakeMigrationRepository extends AbstractFakeRepository<MigrationEnt
 
 	private static ConcurrentMap<Integer, MigrationEntry> storage = new ConcurrentHashMap<>();
 	
-	private static int idGenerator = 0;
+	private static IdGenerator<Integer> idGenerator = new IntIdGenerator();
 	
 	@Override
 	public MigrationEntry getCurrentVersion() {
@@ -33,7 +33,7 @@ public class FakeMigrationRepository extends AbstractFakeRepository<MigrationEnt
 
 	@Override
 	protected void setKey(MigrationEntry item) {
-		item.setId(++idGenerator);
+		item.setId(idGenerator.next());
 	}
 
 	@Override

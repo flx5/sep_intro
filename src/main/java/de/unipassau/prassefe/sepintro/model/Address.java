@@ -45,7 +45,7 @@ public class Address {
 	}
 	
 	public Address() {
-		
+		this("", 0, "", "", "");
 	}
 
 	/**

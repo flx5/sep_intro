@@ -44,8 +44,9 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 
 	@Override
 	public void insert(User value) {
-		nonQuery("INSERT INTO users (username, passwordhash, realname, birthday, salt, street, street_nr, zipcode, city, country)"
-				+ " VALUES (:username, :password, :realname, :birthday, :salt, :street, :streetnr, :zipcode, :city, :country)",
+		nonQuery(
+				"INSERT INTO users (username, passwordhash, realname, birthday, salt, street, street_nr, zipcode, city, country)"
+						+ " VALUES (:username, :password, :realname, :birthday, :salt, :street, :streetnr, :zipcode, :city, :country)",
 				stmt -> populateStatement(stmt, value));
 	}
 
@@ -57,17 +58,12 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 	}
 
 	@Override
-	protected User toItem(ResultSet result) {
-		Address address;
-		try {
-			address = new Address(result.getString("street"), result.getInt("street_nr"), result.getString("zipcode"),
-					result.getString("city"), result.getString("country"));
-			return new User(result.getInt("id"), result.getString("username"), result.getBytes("passwordhash"),
-					result.getString("realname"), result.getDate("birthday").toLocalDate(), address,
-					result.getBytes("salt"));
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
+	protected User toItem(ResultSet result) throws SQLException {
+		Address address = new Address(result.getString("street"), result.getInt("street_nr"), result.getString("zipcode"),
+				result.getString("city"), result.getString("country"));
+		return new User(result.getInt("id"), result.getString("username"), result.getBytes("passwordhash"),
+				result.getString("realname"), result.getDate("birthday").toLocalDate(), address,
+				result.getBytes("salt"));
 	}
 
 	@Override

@@ -1,7 +1,5 @@
 package de.unipassau.prassefe.sepintro.model;
 
-import java.io.Serializable;
-
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
@@ -11,12 +9,7 @@ import de.unipassau.prassefe.sepintro.model.repository.UserRepository;
 
 @ManagedBean(eager = true)
 @SessionScoped
-public class UserSession implements Serializable {
-	/**
-	 * Serial version id
-	 */
-	private static final long serialVersionUID = 1L;
-
+public class UserSession {
 	private User user;
 	
 	@ManagedProperty(value = "#{appConfig}")

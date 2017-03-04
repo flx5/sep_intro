@@ -11,7 +11,9 @@ public interface Repository<T, K> extends AutoCloseable {
 	
 	void create();
 	void destroy();
-	void close() throws RuntimeException; 
+	
+	@Override
+	void close(); 
 	
 	void setConfig(Config config);
 }

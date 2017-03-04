@@ -9,7 +9,7 @@ import de.unipassau.prassefe.sepintro.model.repository.UserRepository;
 public class FakeUserRepository extends AbstractFakeRepository<User, Integer> implements UserRepository {
 	private static ConcurrentMap<Integer, User> storage = new ConcurrentHashMap<>();
 	
-	private static int idGenerator;
+	private static IdGenerator<Integer> idGenerator = new IntIdGenerator();
 
 	@Override
 	public void update(User value) {
@@ -44,7 +44,7 @@ public class FakeUserRepository extends AbstractFakeRepository<User, Integer> im
 	@Override
 	protected void setKey(User item) {
 		if(item.getId() == 0) {
-			item.setId(++idGenerator);
+			item.setId(idGenerator.next());
 		}
 	}
 

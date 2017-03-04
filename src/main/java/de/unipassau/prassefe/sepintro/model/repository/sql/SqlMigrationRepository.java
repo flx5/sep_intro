@@ -15,10 +15,10 @@ public class SqlMigrationRepository extends AbstractRepository<MigrationEntry, I
 
 	@Override
 	public MigrationEntry getCurrentVersion() {
-		if(!tableExists("migrations")) {
+		if (!tableExists("migrations")) {
 			return null;
 		}
-		
+
 		return queryFirst("SELECT * FROM migrations ORDER BY run_at DESC,id DESC LIMIT 1");
 	}
 
@@ -59,25 +59,17 @@ public class SqlMigrationRepository extends AbstractRepository<MigrationEntry, I
 	}
 
 	@Override
-	protected MigrationEntry toItem(ResultSet result) {
-		try {
-			MigrationEntry entry = new MigrationEntry();
-			entry.setId(result.getInt("id"));
-			entry.setVersion(result.getLong("version"));
-			entry.setRunAt(result.getTimestamp("run_at").toLocalDateTime());
-			
-			return entry;
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
+	protected MigrationEntry toItem(ResultSet result) throws SQLException {
+		MigrationEntry entry = new MigrationEntry(result.getLong("version"));
+		entry.setId(result.getInt("id"));
+		entry.setRunAt(result.getTimestamp("run_at").toLocalDateTime());
+
+		return entry;
 	}
 
 	@Override
 	public void create() {
-		nonQuery("CREATE TABLE migrations ("
-				+ "id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,"
-				+ "version BIGINT NOT NULL,"
-				+ "run_at TIMESTAMP NOT NULL"
-				+ ")");
+		nonQuery("CREATE TABLE migrations (" + "id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,"
+				+ "version BIGINT NOT NULL," + "run_at TIMESTAMP NOT NULL" + ")");
 	}
 }

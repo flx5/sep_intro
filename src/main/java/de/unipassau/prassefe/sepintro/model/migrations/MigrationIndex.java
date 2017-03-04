@@ -13,7 +13,7 @@ public class MigrationIndex {
 
 	public MigrationIndex(Config config) {
 		this.config = config;
-		this.migrations = new TreeMap<Long, Migration>();
+		this.migrations = new TreeMap<>();
 
 		add(new InitialMigration());
 		add(new UserTestMigration());

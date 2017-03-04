@@ -12,6 +12,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import de.unipassau.prassefe.sepintro.model.repository.Repository;
+import de.unipassau.prassefe.sepintro.model.repository.RepositoryNotFoundException;
 import de.unipassau.prassefe.sepintro.util.EnumUtil;
 
 @ManagedBean(eager = true, name = "appConfig")
@@ -66,7 +67,7 @@ public class Config {
 			return repository;
 			
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-			throw new RuntimeException(e);
+			throw new RepositoryNotFoundException(e);
 		}
 	}
 }

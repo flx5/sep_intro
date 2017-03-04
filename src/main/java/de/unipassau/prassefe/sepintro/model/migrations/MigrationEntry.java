@@ -7,10 +7,6 @@ public class MigrationEntry {
 	private long version;
 	private LocalDateTime runAt;
 	
-	public MigrationEntry() {
-		
-	}
-	
 	public MigrationEntry(long version) {
 		this.version = version;
 		runAt = LocalDateTime.now();

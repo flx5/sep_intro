@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 
 import de.unipassau.prassefe.sepintro.model.config.Config;
 import de.unipassau.prassefe.sepintro.model.repository.Repository;
+import de.unipassau.prassefe.sepintro.model.repository.RepositoryException;
 
 public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 	private Connection connection;
@@ -22,11 +23,11 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 			try {
 				acceptThrows(elem);
 			} catch (final Exception e) {
-				throw new RuntimeException(e);
+				throw new RepositoryException(e);
 			}
 		}
 
-		void acceptThrows(T elem) throws Exception;
+		void acceptThrows(T elem) throws SQLException;
 	}
 
 	public AbstractRepository(String table) {
@@ -44,11 +45,11 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 			}
 			return stmt.executeUpdate();
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new RepositoryException(e);
 		}
 	}
 
-	protected abstract T toItem(ResultSet result);
+	protected abstract T toItem(ResultSet result) throws SQLException;
 
 	protected List<T> queryAll(String sql, ThrowingConsumer<NamedPreparedStatement> setValues) {
 		try (NamedPreparedStatement stmt = new NamedPreparedStatement(this.connection, sql)) {
@@ -63,7 +64,7 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 			return values;
 
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new RepositoryException(e);
 		}
 	}
 
@@ -94,7 +95,7 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 				return defaultValue;
 			}
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new RepositoryException(e);
 		}
 	}
 
@@ -105,7 +106,7 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 				this.connection.close();
 			}
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new RepositoryException(e);
 		}
 	}
 
@@ -117,7 +118,7 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 				return res.next();
 			}
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new RepositoryException(e);
 		}
 	}
 
@@ -126,11 +127,12 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 		nonQuery("DROP TABLE " + table);
 	}
 
+	@Override
 	public void setConfig(Config config) {
 		try {
 			this.connection = config.getDataSource().getConnection();
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new RepositoryException(e);
 		}
 	}
 }

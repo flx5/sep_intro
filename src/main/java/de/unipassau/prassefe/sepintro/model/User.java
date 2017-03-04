@@ -10,6 +10,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+import de.unipassau.prassefe.sepintro.util.StringUtil;
+
 public class User {
 	public static final int SALT_SIZE = 32;
 	public static final int HASH_SIZE = 256;
@@ -62,7 +64,7 @@ public class User {
 	
 	public String getPassword() {
 		// required by JSF...
-		return "";
+		return StringUtil.EMPTY;
 	}
 	
 	public byte[] getPasswordHash() {
@@ -115,7 +117,7 @@ public class User {
 			return key.getEncoded();
 
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-			throw new RuntimeException(e);
+			throw new SecurityException(e);
 		}
 	}
 

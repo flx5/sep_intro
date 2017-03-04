@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 
 public enum Page {
 	HOME("Home", "/index.xhtml"),
-	PROFILE("Profile", "/user/profile.xhtml", x -> x.isLoggedIn()),
+	PROFILE("Profile", "/user/profile.xhtml", UserSession::isLoggedIn),
 	LOGIN("Login", "/user/login.xhtml", x -> false);
 
 	private final String title;
