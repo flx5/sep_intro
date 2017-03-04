@@ -1,7 +1,5 @@
 package de.unipassau.prassefe.sepintro.model.config;
 
-import java.io.IOException;
-
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.ExternalContext;
@@ -23,7 +21,7 @@ public class Config {
 	
 	private DataSource dataSource;
 	
-	public Config() throws IOException {
+	public Config() {
 		reload();
 	}
 	
@@ -35,7 +33,7 @@ public class Config {
 		return dataSource;
 	}
 	
-	public void reload() throws IOException {
+	public void reload() {
 		ExternalContext context = FacesContext
 			    .getCurrentInstance().getExternalContext();
 		
