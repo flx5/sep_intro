@@ -36,8 +36,6 @@ public class Config {
 	}
 	
 	public void reload() throws IOException {
-		// TODO Make this unit testable!
-		
 		ExternalContext context = FacesContext
 			    .getCurrentInstance().getExternalContext();
 		
