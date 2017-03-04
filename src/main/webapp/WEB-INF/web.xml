@@ -12,7 +12,7 @@
 
 	<context-param>
 		<param-name>sep.BACKEND</param-name>
-		<param-value>sql</param-value>
+		<param-value>fake</param-value>
 	</context-param>
 
 	<welcome-file-list>
