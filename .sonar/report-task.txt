@@ -1,5 +1,0 @@
-projectKey=sep_intro
-serverUrl=http://localhost:9000
-dashboardUrl=http://localhost:9000/dashboard/index/sep_intro
-ceTaskId=AVpTzO_nntmpiRK9ZUMz
-ceTaskUrl=http://localhost:9000/api/ce/task?id=AVpTzO_nntmpiRK9ZUMz
