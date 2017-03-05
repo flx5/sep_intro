@@ -12,7 +12,7 @@ public class SqlMigrationRepository extends AbstractRepository<MigrationEntry, I
 	public SqlMigrationRepository() {
 		super("migrations");
 	}
-
+	
 	@Override
 	public MigrationEntry getCurrentVersion() {
 		if (!tableExists()) {

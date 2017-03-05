@@ -5,13 +5,10 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 
 import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
-import de.unipassau.prassefe.sepintro.model.migrations.MigrationIndex;
 import de.unipassau.prassefe.sepintro.model.repository.CreateableRepository;
 import de.unipassau.prassefe.sepintro.model.repository.RepositoryException;
 
 public abstract class AbstractFakeRepository<T, K> implements CreateableRepository<T, K> {
-	private static boolean wasInitialized = false;
-	
 	protected abstract K getKey(T item);
 	protected abstract void setKey(T item);
 	protected abstract ConcurrentMap<K, T> getStorage();
@@ -71,16 +68,8 @@ public abstract class AbstractFakeRepository<T, K> implements CreateableReposito
 		// do nothing
 	}
 
-	private static synchronized void initialize(AbstractConfig config) {
-		// Hack to make sure the fake 'database' has been initialized.
-		if (!wasInitialized) {
-			wasInitialized = true;
-			new MigrationIndex(config).migrateToLatest();
-		}
-	}
-
 	@Override
 	public void setConfig(AbstractConfig config) {
-		initialize(config);
+		// do nothing
 	}
 }

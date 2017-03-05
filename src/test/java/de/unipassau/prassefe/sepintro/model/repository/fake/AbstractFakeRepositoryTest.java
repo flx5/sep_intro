@@ -8,10 +8,10 @@ import java.util.concurrent.ConcurrentMap;
 import org.junit.Test;
 
 import de.unipassau.prassefe.sepintro.model.TestPoco;
-import de.unipassau.prassefe.sepintro.model.repository.AbstractRepositoryTest;
+import de.unipassau.prassefe.sepintro.model.repository.BaseAbstractRepositoryTest;
 import de.unipassau.prassefe.sepintro.model.repository.UnitTestRepository;
 
-public class AbstractFakeRepositoryTest extends AbstractRepositoryTest {
+public class AbstractFakeRepositoryTest extends BaseAbstractRepositoryTest {
 
 	private TestRepository repository;
 

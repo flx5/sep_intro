@@ -13,7 +13,7 @@ public class UnitConfig extends AbstractConfig {
 		// TODO Read this from environment variable!
 		db.setUser("sep");
 		db.setPassword("changeme");
-		db.setDatabaseName("sep");
+		db.setDatabaseName("junit");
 		setBackend(Backend.SQL);
 		setDataSource(db);
 	}
