@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import de.unipassau.prassefe.sepintro.model.TestPoco;
 import de.unipassau.prassefe.sepintro.model.repository.BaseAbstractRepositoryTest;
-import de.unipassau.prassefe.sepintro.model.repository.UnitTestRepository;
+import de.unipassau.prassefe.sepintro.model.repository.CreateableRepository;
 
 public class AbstractFakeRepositoryTest extends BaseAbstractRepositoryTest {
 
@@ -25,7 +25,7 @@ public class AbstractFakeRepositoryTest extends BaseAbstractRepositoryTest {
 	}
 
 	private static class TestRepository extends AbstractFakeRepository<TestPoco, Integer>
-			implements UnitTestRepository<TestPoco, Integer> {
+			implements CreateableRepository<TestPoco, Integer> {
 		private ConcurrentMap<Integer, TestPoco> storage = new ConcurrentHashMap<>();
 		private IdGenerator<Integer> idGenerator = new IntIdGenerator();
 

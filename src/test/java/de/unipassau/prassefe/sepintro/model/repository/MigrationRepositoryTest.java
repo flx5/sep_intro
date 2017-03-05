@@ -2,6 +2,8 @@ package de.unipassau.prassefe.sepintro.model.repository;
 
 import static org.junit.Assert.*;
 
+import java.time.LocalDateTime;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -39,5 +41,37 @@ public class MigrationRepositoryTest extends AbstractRepositoryTest {
 		repository.insert(entry);
 		MigrationEntry current = repository.getCurrentVersion();
 		assertEquals(entry, current);
+	}
+	
+	@Test
+	public final void testMultiple() {
+		MigrationEntry entry1 = new MigrationEntry(1);
+		entry1.setId(100);
+		entry1.setRunAt(LocalDateTime.of(2000, 1, 1, 0, 0));
+		
+		MigrationEntry entry2 = new MigrationEntry(2);
+		entry2.setId(101);
+		
+		repository.insert(entry1);
+		repository.insert(entry2);
+		
+		MigrationEntry current = repository.getCurrentVersion();
+		assertEquals(entry2, current);
+	}
+	
+	@Test
+	public final void testSameTime() {
+		MigrationEntry entry1 = new MigrationEntry(1);
+		entry1.setId(200);
+
+		MigrationEntry entry2 = new MigrationEntry(2);
+		entry2.setId(201);
+		entry2.setRunAt(entry1.getRunAt());
+
+		repository.insert(entry1);
+		repository.insert(entry2);
+		
+		MigrationEntry current = repository.getCurrentVersion();
+		assertEquals(entry2, current);
 	}
 }

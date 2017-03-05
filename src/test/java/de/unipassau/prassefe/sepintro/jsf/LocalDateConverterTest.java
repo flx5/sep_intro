@@ -25,7 +25,7 @@ public class LocalDateConverterTest {
 	private FacesContext context;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		this.converter = new LocalDateConverter();
 		this.formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(LOCALE);
 		this.context = mock(FacesContext.class);
@@ -37,7 +37,7 @@ public class LocalDateConverterTest {
 	}
 
 	@After
-	public void tearDown() throws Exception {
+	public void tearDown() {
 	}
 
 	@Test

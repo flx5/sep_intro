@@ -40,6 +40,11 @@ public abstract class AbstractRepository<T, K> implements CreateableRepository<T
 		return queryAll("SELECT * FROM " + table, null);
 	}
 	
+	@Override
+	public void deleteAll() {
+		nonQuery("DELETE FROM " + table);
+	}
+	
 	protected int nonQuery(String sql) {
 		return nonQuery(sql, null);
 	}

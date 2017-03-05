@@ -6,8 +6,9 @@ import static org.junit.Assert.assertNull;
 
 import java.sql.SQLException;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.unipassau.prassefe.sepintro.model.TestPoco;
@@ -15,19 +16,24 @@ import de.unipassau.prassefe.sepintro.model.repository.sql.UnitConfig;
 
 public abstract class BaseAbstractRepositoryTest {
 
-	private UnitTestRepository<TestPoco, Integer> repository;
+	private CreateableRepository<TestPoco, Integer> repository;
 	
-	public BaseAbstractRepositoryTest(UnitTestRepository<TestPoco, Integer> repository) {
+	public BaseAbstractRepositoryTest(CreateableRepository<TestPoco, Integer> repository) {
 		this.repository = repository;
 	}
 	
-	@Before
-	public void setUp() throws SQLException {
+	@BeforeClass
+	public void setUpBeforeClass() {
 		this.repository.setConfig(new UnitConfig());
 		this.repository.create();
 	}
 	
-	@After
+	@Before
+	public void setUp() throws SQLException {
+		this.repository.deleteAll();
+	}
+	
+	@AfterClass
 	public void tearDown() throws SQLException {
 		this.repository.destroy();
 		this.repository.close();

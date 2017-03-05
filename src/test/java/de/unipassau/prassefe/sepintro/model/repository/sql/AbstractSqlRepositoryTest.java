@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import de.unipassau.prassefe.sepintro.model.TestPoco;
 import de.unipassau.prassefe.sepintro.model.repository.BaseAbstractRepositoryTest;
-import de.unipassau.prassefe.sepintro.model.repository.UnitTestRepository;
 
 public class AbstractSqlRepositoryTest extends BaseAbstractRepositoryTest {
 	
@@ -24,7 +23,7 @@ public class AbstractSqlRepositoryTest extends BaseAbstractRepositoryTest {
 		this.repository = repository;
 	}
 	
-	private static class TestRepository extends AbstractRepository<TestPoco, Integer> implements UnitTestRepository<TestPoco, Integer> {
+	private static class TestRepository extends AbstractRepository<TestPoco, Integer> {
 
 		public TestRepository() {
 			super("test");
@@ -68,10 +67,6 @@ public class AbstractSqlRepositoryTest extends BaseAbstractRepositoryTest {
 		@Override
 		public void delete(TestPoco value) {
 			deleteById(value.getId());
-		}
-		
-		public void deleteAll() {
-			nonQuery("DELETE FROM test");
 		}
 
 		@Override

@@ -6,23 +6,24 @@ import java.util.concurrent.ConcurrentMap;
 import de.unipassau.prassefe.sepintro.model.migrations.MigrationEntry;
 import de.unipassau.prassefe.sepintro.model.repository.MigrationRepository;
 
-public class FakeMigrationRepository extends AbstractFakeRepository<MigrationEntry, Integer> implements MigrationRepository {
+public class FakeMigrationRepository extends AbstractFakeRepository<MigrationEntry, Integer>
+		implements MigrationRepository {
 
 	private static ConcurrentMap<Integer, MigrationEntry> storage = new ConcurrentHashMap<>();
-	
+
 	private static IdGenerator<Integer> idGenerator = new IntIdGenerator();
-	
+
 	@Override
 	public MigrationEntry getCurrentVersion() {
-		return storage.values().stream().max((a,b) -> {
+		return storage.values().stream().max((a, b) -> {
 			int result = a.getRunAt().compareTo(b.getRunAt());
-			
-			if(result == 0) {
+
+			if (result == 0) {
 				result = Integer.compare(a.getId(), b.getId());
 			}
-			
+
 			return result;
-			
+
 		}).orElse(null);
 	}
 
@@ -33,7 +34,9 @@ public class FakeMigrationRepository extends AbstractFakeRepository<MigrationEnt
 
 	@Override
 	protected void setKey(MigrationEntry item) {
-		item.setId(idGenerator.next());
+		if (item.getId() == 0) {
+			item.setId(idGenerator.next());
+		}
 	}
 
 	@Override
