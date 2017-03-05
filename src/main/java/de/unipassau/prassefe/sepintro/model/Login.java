@@ -6,7 +6,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 
-import de.unipassau.prassefe.sepintro.model.config.Config;
+import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
 import de.unipassau.prassefe.sepintro.model.repository.UserRepository;
 
 @ManagedBean
@@ -14,7 +14,7 @@ import de.unipassau.prassefe.sepintro.model.repository.UserRepository;
 public class Login {
 
 	@ManagedProperty(value = "#{appConfig}")
-	private Config config;
+	private AbstractConfig config;
 	
 	/**
 	 * The username.
@@ -61,7 +61,7 @@ public class Login {
 		this.userSession = userSession;
 	}
 	
-	public void setConfig(Config config) {
+	public void setConfig(AbstractConfig config) {
 		this.config = config;
 	}
 	

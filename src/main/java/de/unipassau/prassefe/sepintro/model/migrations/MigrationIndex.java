@@ -4,14 +4,14 @@ import java.util.Collection;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
-import de.unipassau.prassefe.sepintro.model.config.Config;
+import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
 import de.unipassau.prassefe.sepintro.model.repository.MigrationRepository;
 
 public class MigrationIndex {
 	private NavigableMap<Long, Migration> migrations;
-	private Config config;
+	private AbstractConfig config;
 
-	public MigrationIndex(Config config) {
+	public MigrationIndex(AbstractConfig config) {
 		this.config = config;
 		this.migrations = new TreeMap<>();
 

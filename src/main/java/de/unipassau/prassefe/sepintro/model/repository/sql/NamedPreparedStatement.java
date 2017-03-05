@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class NamedPreparedStatement implements AutoCloseable {
+public class NamedPreparedStatement implements AutoCloseable {
 	private final Map<String, List<Integer>> paramMap;
 	private final PreparedStatement statement;
 
@@ -42,7 +42,7 @@ class NamedPreparedStatement implements AutoCloseable {
 				} else if (quoteChar == c) {
 					inQuotes = false;
 				}
-			} else if (c == ':' && pos + 1 < length && Character.isJavaIdentifierStart(query.charAt(pos + 1))) {
+			} else if (!inQuotes && c == ':' && pos + 1 < length && Character.isJavaIdentifierStart(query.charAt(pos + 1))) {
 				String name = getWord(pos + 1, query);
 				registerName(name, ++index);
 

@@ -1,4 +1,4 @@
-package sep_intro;
+package de.unipassau.prassefe.sepintro.model;
 
 import static org.junit.Assert.*;
 

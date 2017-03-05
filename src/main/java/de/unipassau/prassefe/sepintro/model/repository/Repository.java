@@ -1,8 +1,11 @@
 package de.unipassau.prassefe.sepintro.model.repository;
 
-import de.unipassau.prassefe.sepintro.model.config.Config;
+import java.util.Collection;
+
+import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
 
 public interface Repository<T, K> extends AutoCloseable {
+	Collection<T> all();
 	T getById(K id);
 	void update(T value);
 	void insert(T value);
@@ -15,5 +18,5 @@ public interface Repository<T, K> extends AutoCloseable {
 	@Override
 	void close(); 
 	
-	void setConfig(Config config);
+	void setConfig(AbstractConfig config);
 }

@@ -1,9 +1,11 @@
 package de.unipassau.prassefe.sepintro.model.repository.fake;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 
-import de.unipassau.prassefe.sepintro.model.config.Config;
+import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
 import de.unipassau.prassefe.sepintro.model.migrations.MigrationIndex;
 import de.unipassau.prassefe.sepintro.model.repository.Repository;
 
@@ -14,6 +16,11 @@ public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
 	protected abstract void setKey(T item);
 	protected abstract ConcurrentMap<K, T> getStorage();
 
+	@Override
+	public Collection<T> all() {
+		return getStorage().values();
+	}
+	
 	@Override
 	public void update(T value) {
 		this.getStorage().put(getKey(value), value);
@@ -64,7 +71,7 @@ public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
 		// do nothing
 	}
 
-	private static synchronized void initialize(Config config) {
+	private static synchronized void initialize(AbstractConfig config) {
 		// Hack to make sure the fake 'database' has been initialized.
 		if (!wasInitialized) {
 			wasInitialized = true;
@@ -73,7 +80,7 @@ public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
 	}
 
 	@Override
-	public void setConfig(Config config) {
+	public void setConfig(AbstractConfig config) {
 		initialize(config);
 	}
 }

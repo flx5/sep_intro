@@ -1,6 +1,6 @@
 package de.unipassau.prassefe.sepintro.model.migrations;
 
-import de.unipassau.prassefe.sepintro.model.config.Config;
+import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
 import de.unipassau.prassefe.sepintro.model.repository.MigrationRepository;
 import de.unipassau.prassefe.sepintro.model.repository.UserRepository;
 
@@ -12,7 +12,7 @@ public class InitialMigration implements Migration {
 	}
 
 	@Override
-	public void up(Config config) {
+	public void up(AbstractConfig config) {
 		try(MigrationRepository repo = config.getRepository(MigrationRepository.class)) {
 			repo.create();
 		}
@@ -23,7 +23,7 @@ public class InitialMigration implements Migration {
 	}
 
 	@Override
-	public void down(Config config) {
+	public void down(AbstractConfig config) {
 		try(UserRepository repo = config.getRepository(UserRepository.class)) {
 			repo.destroy();
 		}

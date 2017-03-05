@@ -5,10 +5,11 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
-import de.unipassau.prassefe.sepintro.model.config.Config;
+import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
 import de.unipassau.prassefe.sepintro.model.repository.Repository;
 import de.unipassau.prassefe.sepintro.model.repository.RepositoryException;
 
@@ -34,6 +35,11 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 		this.table = table;
 	}
 
+	@Override
+	public Collection<T> all() {
+		return queryAll("SELECT * FROM " + table, null);
+	}
+	
 	protected int nonQuery(String sql) {
 		return nonQuery(sql, null);
 	}
@@ -128,7 +134,7 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 	}
 
 	@Override
-	public void setConfig(Config config) {
+	public void setConfig(AbstractConfig config) {
 		try {
 			this.connection = config.getDataSource().getConnection();
 		} catch (SQLException e) {

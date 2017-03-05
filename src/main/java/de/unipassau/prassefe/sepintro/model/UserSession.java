@@ -4,7 +4,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 
-import de.unipassau.prassefe.sepintro.model.config.Config;
+import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
 import de.unipassau.prassefe.sepintro.model.repository.UserRepository;
 
 @ManagedBean(eager = true)
@@ -13,7 +13,7 @@ public class UserSession {
 	private User user;
 	
 	@ManagedProperty(value = "#{appConfig}")
-	private Config config;
+	private AbstractConfig config;
 	
 	public boolean isLoggedIn() {
 		return this.user != null;
@@ -27,7 +27,7 @@ public class UserSession {
 		this.user = user;
 	}
 	
-	public void setConfig(Config config) {
+	public void setConfig(AbstractConfig config) {
 		this.config = config;
 	}
 

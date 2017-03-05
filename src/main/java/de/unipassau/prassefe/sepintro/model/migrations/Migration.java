@@ -1,9 +1,9 @@
 package de.unipassau.prassefe.sepintro.model.migrations;
 
-import de.unipassau.prassefe.sepintro.model.config.Config;
+import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
 
 public interface Migration {
 	long getId();
-	void up(Config config);
-	void down(Config config);
+	void up(AbstractConfig config);
+	void down(AbstractConfig config);
 }
