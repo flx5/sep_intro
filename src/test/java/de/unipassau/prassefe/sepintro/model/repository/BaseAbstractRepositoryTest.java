@@ -1,39 +1,36 @@
 package de.unipassau.prassefe.sepintro.model.repository;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.unipassau.prassefe.sepintro.model.TestPoco;
 import de.unipassau.prassefe.sepintro.model.repository.sql.UnitConfig;
 
-public abstract class BaseAbstractRepositoryTest {
+public abstract class BaseAbstractRepositoryTest<T, K> {
 
-	private CreateableRepository<TestPoco, Integer> repository;
+	private final CreateableRepository<T, K> repository;
+	private final boolean testDuplicates;
 	
-	public BaseAbstractRepositoryTest(CreateableRepository<TestPoco, Integer> repository) {
+	public BaseAbstractRepositoryTest(CreateableRepository<T, K> repository, boolean testDuplicates) {
 		this.repository = repository;
+		this.testDuplicates = testDuplicates;
 	}
 	
-	@BeforeClass
-	public void setUpBeforeClass() {
-		this.repository.setConfig(new UnitConfig());
-		this.repository.create();
+	public BaseAbstractRepositoryTest(CreateableRepository<T, K> repository) {
+		this(repository, false);
 	}
 	
 	@Before
 	public void setUp() throws SQLException {
-		this.repository.deleteAll();
+		this.repository.setConfig(new UnitConfig());
+		this.repository.create();
 	}
 	
-	@AfterClass
+	@After
 	public void tearDown() throws SQLException {
 		this.repository.destroy();
 		this.repository.close();
@@ -41,58 +38,71 @@ public abstract class BaseAbstractRepositoryTest {
 	
 	@Test
 	public final void testNotExisting() {
-		assertNull(repository.getById(0));
+		assertNull(repository.getById(newKey()));
 	}
 	
+	protected abstract T newPoco(K id);
+	protected abstract K newKey();
+	protected abstract void changePoco(T poco);
+	
 	@Test
-	public final void testInsert() {
-		TestPoco poco = new TestPoco(1, 2);
+	public final void testInsertAndDelete() {
+		K id = newKey();
+		T poco = newPoco(id);
 
 		repository.insert(poco);
-		TestPoco fromDb = repository.getById(1);
+		T fromDb = repository.getById(id);
 
 		assertEquals(poco, fromDb);
 		
 		repository.delete(poco);
 		
-		assertNull(repository.getById(1));
+		assertNull(repository.getById(id));
 	}
 
 	@Test(expected = RepositoryException.class)
 	public final void testInsertDuplicate() {
-		repository.insert(new TestPoco(1, 2));
-		repository.insert(new TestPoco(1, 2));
+		if(!testDuplicates) {
+			throw new RepositoryException("no duplicate test required");
+		}
+		
+		T poco = newPoco(newKey());
+		
+		repository.insert(poco);
+		repository.insert(poco);
 	}
 	
 	@Test
 	public final void testQueryAll() {
-		TestPoco[] expected = new TestPoco[] {
-				new TestPoco(1, 2),
-				new TestPoco(3, 4),
+		@SuppressWarnings("unchecked")
+		T[] expected = (T[])new Object[] {
+				newPoco(newKey()),
+				newPoco(newKey())
 		};
 		
-		repository.deleteAll();
-		
-		for(TestPoco poco : expected) {
+		for(T poco : expected) {
 			repository.insert(poco);
 		}
 		
-		TestPoco[] values = repository.all().toArray(new TestPoco[0]);
+		@SuppressWarnings("unchecked")
+		T[] values = repository.all().toArray((T[])new Object[0]);
 		assertArrayEquals(expected, values);
 	}
 	
 	@Test
 	public final void testUpdate() {
-		TestPoco poco = new TestPoco(2, 2);
+		K id = newKey();
+		
+		T poco = newPoco(id);
 		
 		repository.insert(poco);
 		
-		poco.setValue(4);
+		changePoco(poco);
 		
 		repository.update(poco);
 		
-		TestPoco fromDb = repository.getById(poco.getId());
+		T fromDb = repository.getById(id);
 		
-		assertEquals(4, fromDb.getValue());
+		assertEquals(poco, fromDb);
 	}
 }

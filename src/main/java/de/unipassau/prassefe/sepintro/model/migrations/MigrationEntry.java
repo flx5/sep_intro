@@ -9,8 +9,8 @@ public class MigrationEntry {
 	
 	public MigrationEntry(long version) {
 		this.version = version;
-		// Nano seconds would be dropped by db anyways
-		runAt = LocalDateTime.now().withNano(0);
+		
+		setRunAt(LocalDateTime.now());
 	}
 	
 	/**
@@ -36,7 +36,8 @@ public class MigrationEntry {
 	 * @param runAt the runAt to set
 	 */
 	public void setRunAt(LocalDateTime runAt) {
-		this.runAt = runAt;
+		// Nano seconds would be dropped by db anyways
+		this.runAt = runAt.withNano(0);
 	}
 	/**
 	 * @return the version

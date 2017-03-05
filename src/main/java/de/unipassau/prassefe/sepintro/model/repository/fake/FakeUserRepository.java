@@ -4,6 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import de.unipassau.prassefe.sepintro.model.User;
+import de.unipassau.prassefe.sepintro.model.repository.RepositoryException;
 import de.unipassau.prassefe.sepintro.model.repository.UserRepository;
 
 public class FakeUserRepository extends AbstractFakeRepository<User, Integer> implements UserRepository {
@@ -16,7 +17,7 @@ public class FakeUserRepository extends AbstractFakeRepository<User, Integer> im
 		
 		if(getByCondition(x -> x.getUserName().equals(value.getUserName()) 
 				&& x.getId() != value.getId()) != null) {
-			throw new IllegalStateException("Username exists!");
+			throw new RepositoryException("Username exists!");
 		}
 		
 		super.update(value);
@@ -25,7 +26,7 @@ public class FakeUserRepository extends AbstractFakeRepository<User, Integer> im
 	@Override
 	public void insert(User value) {
 		if(getByUserName(value.getUserName()) != null) {
-			throw new IllegalStateException("Username exists!");
+			throw new RepositoryException("Username exists!");
 		}
 		
 		super.insert(value);

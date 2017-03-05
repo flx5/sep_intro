@@ -8,9 +8,9 @@ import java.sql.SQLException;
 import org.junit.Test;
 
 import de.unipassau.prassefe.sepintro.model.TestPoco;
-import de.unipassau.prassefe.sepintro.model.repository.BaseAbstractRepositoryTest;
+import de.unipassau.prassefe.sepintro.model.repository.TestPocoAbstractRepositoryTest;
 
-public class AbstractSqlRepositoryTest extends BaseAbstractRepositoryTest {
+public class AbstractSqlRepositoryTest extends TestPocoAbstractRepositoryTest {
 	
 	private TestRepository repository;
 	

@@ -65,16 +65,11 @@ public abstract class AbstractFakeRepository<T, K> implements CreateableReposito
 
 	@Override
 	public void destroy() {
-		// do nothing
+		getStorage().clear();
 	}
 
 	@Override
 	public void setConfig(AbstractConfig config) {
 		// do nothing
-	}
-	
-	@Override
-	public void deleteAll() {
-		getStorage().clear();
 	}
 }

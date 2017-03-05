@@ -13,12 +13,12 @@ import de.unipassau.prassefe.sepintro.model.config.Backend;
 import de.unipassau.prassefe.sepintro.model.migrations.MigrationEntry;
 
 @RunWith(Parameterized.class)
-public class MigrationRepositoryTest extends AbstractRepositoryTest {
+public class MigrationRepositoryTest extends IntAbstractRepositoryTest<MigrationEntry> {
 
 	private MigrationRepository repository;
 
 	public MigrationRepositoryTest(MigrationRepository repository) {
-		super(repository);
+		super(repository, false);
 		this.repository = repository;
 	}
 	
@@ -73,5 +73,17 @@ public class MigrationRepositoryTest extends AbstractRepositoryTest {
 		
 		MigrationEntry current = repository.getCurrentVersion();
 		assertEquals(entry2, current);
+	}
+
+	@Override
+	protected MigrationEntry newPoco(Integer id) {
+		MigrationEntry entry = new MigrationEntry(id);
+		entry.setId(id);
+		return entry;
+	}
+
+	@Override
+	protected void changePoco(MigrationEntry poco) {
+		poco.setRunAt(LocalDateTime.now());
 	}
 }

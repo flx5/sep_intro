@@ -134,4 +134,19 @@ public class User {
 	public void setId(int id) {
 		this.id = id;
 	}
+	
+	@Override
+	public int hashCode() {
+		return userName.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null || !(obj instanceof User)) {
+			return false;
+		}
+		
+		User other = (User)obj;
+		return this.userName.equals(other.userName);
+	}
 }
