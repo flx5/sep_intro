@@ -1,15 +1,15 @@
 package de.unipassau.prassefe.sepintro.model.repository.fake;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 
 import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
 import de.unipassau.prassefe.sepintro.model.migrations.MigrationIndex;
-import de.unipassau.prassefe.sepintro.model.repository.Repository;
+import de.unipassau.prassefe.sepintro.model.repository.CreateableRepository;
+import de.unipassau.prassefe.sepintro.model.repository.RepositoryException;
 
-public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
+public abstract class AbstractFakeRepository<T, K> implements CreateableRepository<T, K> {
 	private static boolean wasInitialized = false;
 	
 	protected abstract K getKey(T item);
@@ -29,7 +29,7 @@ public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
 	@Override
 	public void insert(T value) {
 		if (this.getStorage().containsKey(getKey(value))) {
-			throw new IllegalStateException("Value with key exists already!");
+			throw new RepositoryException("Value with key exists already!");
 		}
 
 		setKey(value);
@@ -60,7 +60,7 @@ public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
 	public void delete(T value) {
 		deleteById(getKey(value));
 	}
-
+	
 	@Override
 	public void create() {
 		// do nothing

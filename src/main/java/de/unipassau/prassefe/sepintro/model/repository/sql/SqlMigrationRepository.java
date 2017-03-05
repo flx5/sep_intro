@@ -15,7 +15,7 @@ public class SqlMigrationRepository extends AbstractRepository<MigrationEntry, I
 
 	@Override
 	public MigrationEntry getCurrentVersion() {
-		if (!tableExists("migrations")) {
+		if (!tableExists()) {
 			return null;
 		}
 

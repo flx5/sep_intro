@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
-import de.unipassau.prassefe.sepintro.model.repository.Repository;
+import de.unipassau.prassefe.sepintro.model.repository.CreateableRepository;
 import de.unipassau.prassefe.sepintro.model.repository.RepositoryException;
 
-public abstract class AbstractRepository<T, K> implements Repository<T, K> {
+public abstract class AbstractRepository<T, K> implements CreateableRepository<T, K> {
 	private Connection connection;
 	private final String table;
 
@@ -116,7 +116,7 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 		}
 	}
 
-	protected boolean tableExists(String table) {
+	protected boolean tableExists() {
 		try {
 			DatabaseMetaData meta = connection.getMetaData();
 

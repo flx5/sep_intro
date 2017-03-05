@@ -11,4 +11,8 @@ public class RepositoryException extends RuntimeException {
 		super(inner);
 	}
 
+	public RepositoryException(String message) {
+		super(message);
+	}
+
 }
