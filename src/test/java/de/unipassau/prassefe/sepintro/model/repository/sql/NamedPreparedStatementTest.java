@@ -14,6 +14,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.unipassau.prassefe.sepintro.util.NamedPreparedStatement;
+
 public class NamedPreparedStatementTest {
 	private Connection connection;
 

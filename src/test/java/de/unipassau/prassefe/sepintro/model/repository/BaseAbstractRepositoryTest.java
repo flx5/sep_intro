@@ -3,6 +3,7 @@ package de.unipassau.prassefe.sepintro.model.repository;
 import static org.junit.Assert.*;
 
 import java.sql.SQLException;
+import java.util.Optional;
 
 import org.junit.After;
 import org.junit.Before;
@@ -38,7 +39,7 @@ public abstract class BaseAbstractRepositoryTest<T, K> {
 	
 	@Test
 	public final void testNotExisting() {
-		assertNull(repository.getById(newKey()));
+		assertFalse(repository.getById(newKey()).isPresent());
 	}
 	
 	protected abstract T newPoco(K id);
@@ -51,13 +52,14 @@ public abstract class BaseAbstractRepositoryTest<T, K> {
 		T poco = newPoco(id);
 
 		repository.insert(poco);
-		T fromDb = repository.getById(id);
+		Optional<T> fromDb = repository.getById(id);
 
-		assertEquals(poco, fromDb);
+		assertTrue(fromDb.isPresent());
+		assertEquals(poco, fromDb.get());
 		
 		repository.delete(poco);
 		
-		assertNull(repository.getById(id));
+		assertTrue(!repository.getById(id).isPresent());
 	}
 
 	@Test(expected = RepositoryException.class)
@@ -101,8 +103,9 @@ public abstract class BaseAbstractRepositoryTest<T, K> {
 		
 		repository.update(poco);
 		
-		T fromDb = repository.getById(id);
+		Optional<T> fromDb = repository.getById(id);
 		
-		assertEquals(poco, fromDb);
+		assertTrue(fromDb.isPresent());
+		assertEquals(poco, fromDb.get());
 	}
 }

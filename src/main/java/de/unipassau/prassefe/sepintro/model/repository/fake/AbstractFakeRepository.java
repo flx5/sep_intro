@@ -1,6 +1,7 @@
 package de.unipassau.prassefe.sepintro.model.repository.fake;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 
@@ -35,12 +36,12 @@ public abstract class AbstractFakeRepository<T, K> implements CreateableReposito
 	}
 
 	@Override
-	public T getById(K id) {
-		return getStorage().get(id);
+	public Optional<T> getById(K id) {
+		return Optional.ofNullable(getStorage().get(id));
 	}
 
-	protected T getByCondition(Predicate<T> predicate) {
-		return getStorage().values().stream().filter(predicate).findAny().orElse(null);
+	protected Optional<T> getByCondition(Predicate<T> predicate) {
+		return getStorage().values().stream().filter(predicate).findAny();
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package de.unipassau.prassefe.sepintro.model.repository.sql;
+package de.unipassau.prassefe.sepintro.util;
 
 import java.sql.Connection;
 import java.sql.Date;

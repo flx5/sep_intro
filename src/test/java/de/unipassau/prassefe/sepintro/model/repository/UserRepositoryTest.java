@@ -2,6 +2,8 @@ package de.unipassau.prassefe.sepintro.model.repository;
 
 import static org.junit.Assert.*;
 
+import java.util.Optional;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -32,16 +34,20 @@ public class UserRepositoryTest extends IntAbstractRepositoryTest<User> {
 		
 		this.repository.insert(user);
 		
-		User fromDb = this.repository.getByUserName("name");
+		Optional<User> fromDb = this.repository.getByUserName("name");
 
-		assertTrue(fromDb.verifyPassword("Password"));
-		assertFalse(fromDb.verifyPassword("notPassword"));
-		assertFalse(fromDb.verifyPassword("password"));
+		assertTrue(fromDb.isPresent());
+		
+		fromDb.ifPresent(x -> {
+			assertTrue(x.verifyPassword("Password"));
+			assertFalse(x.verifyPassword("notPassword"));
+			assertFalse(x.verifyPassword("password"));
+		});
 		
 		repository.deleteByUsername("name");
 		
-		this.repository.insert(fromDb);
-		repository.delete(user);
+		fromDb = this.repository.getByUserName("name");
+		assertFalse(fromDb.isPresent());
 	}
 
 	@Test(expected = RepositoryException.class)

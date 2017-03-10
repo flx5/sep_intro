@@ -2,10 +2,12 @@ package de.unipassau.prassefe.sepintro.model.repository.sql;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 import de.unipassau.prassefe.sepintro.model.Address;
 import de.unipassau.prassefe.sepintro.model.User;
 import de.unipassau.prassefe.sepintro.model.repository.UserRepository;
+import de.unipassau.prassefe.sepintro.util.NamedPreparedStatement;
 
 public class SqlUserRepository extends AbstractRepository<User, Integer> implements UserRepository {
 	public SqlUserRepository() {
@@ -13,10 +15,10 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 	}
 
 	@Override
-	public User getById(Integer id) {
-		return queryFirstOrDefault("SELECT * FROM users WHERE id = :id", stmt -> {
+	public Optional<User> getById(Integer id) {
+		return queryFirst("SELECT * FROM users WHERE id = :id", stmt -> {
 			stmt.setInt("id", id);
-		}, null);
+		});
 	}
 
 	@Override
@@ -51,7 +53,7 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 	}
 
 	@Override
-	public User getByUserName(String username) {
+	public Optional<User> getByUserName(String username) {
 		return queryFirst("SELECT * FROM users WHERE username = :username", stmt -> {
 			stmt.setString("username", username);
 		});

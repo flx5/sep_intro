@@ -4,32 +4,21 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Optional;
 
 import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
 import de.unipassau.prassefe.sepintro.model.repository.CreateableRepository;
 import de.unipassau.prassefe.sepintro.model.repository.RepositoryException;
+import de.unipassau.prassefe.sepintro.util.NamedPreparedStatement;
+import de.unipassau.prassefe.sepintro.util.SQLUtil;
+import de.unipassau.prassefe.sepintro.util.functional.ThrowingConsumer;
 
 public abstract class AbstractRepository<T, K> implements CreateableRepository<T, K> {
 	private Connection connection;
 	private final String table;
-
-	@FunctionalInterface
-	interface ThrowingConsumer<T> extends Consumer<T> {
-		@Override
-		default void accept(final T elem) {
-			try {
-				acceptThrows(elem);
-			} catch (final Exception e) {
-				throw new RepositoryException(e);
-			}
-		}
-
-		void acceptThrows(T elem) throws SQLException;
-	}
+	private SQLUtil sqlUtil;
 
 	public AbstractRepository(String table) {
 		this.table = table;
@@ -39,17 +28,14 @@ public abstract class AbstractRepository<T, K> implements CreateableRepository<T
 	public Collection<T> all() {
 		return queryAll("SELECT * FROM " + table, null);
 	}
-	
+
 	protected int nonQuery(String sql) {
 		return nonQuery(sql, null);
 	}
 
-	protected int nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement> setValues) {
-		try (NamedPreparedStatement stmt = new NamedPreparedStatement(this.connection, sql)) {
-			if (setValues != null) {
-				setValues.accept(stmt);
-			}
-			return stmt.executeUpdate();
+	protected int nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues) {
+		try {
+			return sqlUtil.nonQuery(sql, setValues);
 		} catch (SQLException e) {
 			throw new RepositoryException(e);
 		}
@@ -57,49 +43,21 @@ public abstract class AbstractRepository<T, K> implements CreateableRepository<T
 
 	protected abstract T toItem(ResultSet result) throws SQLException;
 
-	protected List<T> queryAll(String sql, ThrowingConsumer<NamedPreparedStatement> setValues) {
-		try (NamedPreparedStatement stmt = new NamedPreparedStatement(this.connection, sql)) {
-			ResultSet result = query(stmt, setValues);
-
-			List<T> values = new ArrayList<>();
-
-			while (result.next()) {
-				values.add(toItem(result));
-			}
-
-			return values;
-
+	protected List<T> queryAll(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues) {
+		try {
+			return sqlUtil.queryAll(sql, setValues, this::toItem);
 		} catch (SQLException e) {
 			throw new RepositoryException(e);
 		}
 	}
 
-	private ResultSet query(NamedPreparedStatement stmt, ThrowingConsumer<NamedPreparedStatement> setValues)
-			throws SQLException {
-
-		if (setValues != null) {
-			setValues.accept(stmt);
-		}
-		
-		return stmt.executeQuery();
+	protected Optional<T> queryFirst(String sql) {
+		return queryFirst(sql, null);
 	}
 
-	protected T queryFirst(String sql) {
-		return queryFirstOrDefault(sql, null, null);
-	}
-
-	protected T queryFirst(String sql, ThrowingConsumer<NamedPreparedStatement> setValues) {
-		return queryFirstOrDefault(sql, setValues, null);
-	}
-
-	protected T queryFirstOrDefault(String sql, ThrowingConsumer<NamedPreparedStatement> setValues, T defaultValue) {
-		try (NamedPreparedStatement stmt = new NamedPreparedStatement(this.connection, sql)) {
-			ResultSet result = query(stmt, setValues);
-			if (result.first()) {
-				return toItem(result);
-			} else {
-				return defaultValue;
-			}
+	protected Optional<T> queryFirst(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues) {
+		try {
+			return sqlUtil.queryFirst(sql, setValues, this::toItem);
 		} catch (SQLException e) {
 			throw new RepositoryException(e);
 		}
@@ -137,6 +95,7 @@ public abstract class AbstractRepository<T, K> implements CreateableRepository<T
 	public void setConfig(AbstractConfig config) {
 		try {
 			this.connection = config.getDataSource().getConnection();
+			this.sqlUtil = new SQLUtil(this.connection);
 		} catch (SQLException e) {
 			throw new RepositoryException(e);
 		}

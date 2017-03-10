@@ -1,5 +1,7 @@
 package de.unipassau.prassefe.sepintro.model;
 
+import java.util.Optional;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -15,18 +17,18 @@ public class Login {
 
 	@ManagedProperty(value = "#{appConfig}")
 	private AbstractConfig config;
-	
+
 	/**
 	 * The username.
 	 */
 	private String userName;
-	
+
 	/**
 	 * The password.
 	 */
 	private String password;
 
-	@ManagedProperty(value="#{userSession}")
+	@ManagedProperty(value = "#{userSession}")
 	private UserSession userSession;
 
 	/**
@@ -37,7 +39,8 @@ public class Login {
 	}
 
 	/**
-	 * @param userName the userName to set
+	 * @param userName
+	 *            the userName to set
 	 */
 	public void setUserName(String userName) {
 		this.userName = userName;
@@ -51,38 +54,37 @@ public class Login {
 	}
 
 	/**
-	 * @param password the password to set
+	 * @param password
+	 *            the password to set
 	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
 	public void setUserSession(UserSession userSession) {
 		this.userSession = userSession;
 	}
-	
+
 	public void setConfig(AbstractConfig config) {
 		this.config = config;
 	}
-	
+
 	public String login() {
-		User user;
-		
-		try(UserRepository repo = config.getRepository(UserRepository.class)) {
+		Optional<User> user;
+
+		try (UserRepository repo = config.getRepository(UserRepository.class)) {
 			user = repo.getByUserName(this.getUserName());
-		}	
-		
-		if(user != null &&
-			user.verifyPassword(this.getPassword())) {
-			this.userSession.setUser(user);
-			return "profile";
 		}
-		
-		FacesContext.getCurrentInstance().addMessage(
-                null,
-                new FacesMessage(FacesMessage.SEVERITY_WARN,
-                "Invalid Login!",
-                "Please Try Again!"));
-		return null;
+
+		boolean loggedIn = user.map(x -> x.verifyPassword(this.getPassword())).orElse(false);
+
+		if (loggedIn) {
+			user.ifPresent(this.userSession::setUser);
+			return "profile";
+		} else {
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_WARN, "Invalid Login!", "Please Try Again!"));
+			return null;
+		}
 	}
 }

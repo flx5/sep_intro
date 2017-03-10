@@ -1,9 +1,10 @@
 package de.unipassau.prassefe.sepintro.model.repository.fake;
 
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import de.unipassau.prassefe.sepintro.model.migrations.MigrationEntry;
+import de.unipassau.prassefe.sepintro.migration.MigrationEntry;
 import de.unipassau.prassefe.sepintro.model.repository.MigrationRepository;
 
 public class FakeMigrationRepository extends AbstractFakeRepository<MigrationEntry, Integer>
@@ -14,7 +15,7 @@ public class FakeMigrationRepository extends AbstractFakeRepository<MigrationEnt
 	private static IdGenerator<Integer> idGenerator = new IntIdGenerator();
 
 	@Override
-	public MigrationEntry getCurrentVersion() {
+	public Optional<MigrationEntry> getCurrentVersion() {
 		return storage.values().stream().max((a, b) -> {
 			int result = a.getRunAt().compareTo(b.getRunAt());
 
@@ -24,7 +25,7 @@ public class FakeMigrationRepository extends AbstractFakeRepository<MigrationEnt
 
 			return result;
 
-		}).orElse(null);
+		});
 	}
 
 	@Override

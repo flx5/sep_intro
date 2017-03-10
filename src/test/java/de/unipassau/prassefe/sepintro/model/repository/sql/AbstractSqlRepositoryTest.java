@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 import org.junit.Test;
 
@@ -35,7 +36,7 @@ public class AbstractSqlRepositoryTest extends TestPocoAbstractRepositoryTest {
 		}
 
 		@Override
-		public TestPoco getById(Integer id) {
+		public Optional<TestPoco> getById(Integer id) {
 			return queryFirst("SELECT * FROM test WHERE id = :id", stmt -> {
 				stmt.setInt("id", id);
 			});

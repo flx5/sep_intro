@@ -1,7 +1,9 @@
 package de.unipassau.prassefe.sepintro.model.repository;
 
-import de.unipassau.prassefe.sepintro.model.migrations.MigrationEntry;
+import java.util.Optional;
+
+import de.unipassau.prassefe.sepintro.migration.MigrationEntry;
 
 public interface MigrationRepository extends CreateableRepository<MigrationEntry, Integer> {
-	MigrationEntry getCurrentVersion();
+	Optional<MigrationEntry> getCurrentVersion();
 }

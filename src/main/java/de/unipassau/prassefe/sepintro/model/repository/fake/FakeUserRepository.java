@@ -1,5 +1,6 @@
 package de.unipassau.prassefe.sepintro.model.repository.fake;
 
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -16,7 +17,7 @@ public class FakeUserRepository extends AbstractFakeRepository<User, Integer> im
 	public void update(User value) {
 		
 		if(getByCondition(x -> x.getUserName().equals(value.getUserName()) 
-				&& x.getId() != value.getId()) != null) {
+				&& x.getId() != value.getId()).isPresent()) {
 			throw new RepositoryException("Username exists!");
 		}
 		
@@ -25,7 +26,7 @@ public class FakeUserRepository extends AbstractFakeRepository<User, Integer> im
 
 	@Override
 	public void insert(User value) {
-		if(getByUserName(value.getUserName()) != null) {
+		if(getByUserName(value.getUserName()).isPresent()) {
 			throw new RepositoryException("Username exists!");
 		}
 		
@@ -33,7 +34,7 @@ public class FakeUserRepository extends AbstractFakeRepository<User, Integer> im
 	}
 
 	@Override
-	public User getByUserName(String username) {
+	public Optional<User> getByUserName(String username) {
 		return getByCondition(x -> x.getUserName().equals(username));
 	}
 

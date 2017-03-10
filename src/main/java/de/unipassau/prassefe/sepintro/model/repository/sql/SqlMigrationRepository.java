@@ -3,8 +3,9 @@ package de.unipassau.prassefe.sepintro.model.repository.sql;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Optional;
 
-import de.unipassau.prassefe.sepintro.model.migrations.MigrationEntry;
+import de.unipassau.prassefe.sepintro.migration.MigrationEntry;
 import de.unipassau.prassefe.sepintro.model.repository.MigrationRepository;
 
 public class SqlMigrationRepository extends AbstractRepository<MigrationEntry, Integer> implements MigrationRepository {
@@ -14,16 +15,16 @@ public class SqlMigrationRepository extends AbstractRepository<MigrationEntry, I
 	}
 	
 	@Override
-	public MigrationEntry getCurrentVersion() {
+	public Optional<MigrationEntry> getCurrentVersion() {
 		if (!tableExists()) {
-			return null;
+			return Optional.empty();
 		}
 
 		return queryFirst("SELECT * FROM migrations ORDER BY run_at DESC,id DESC LIMIT 1");
 	}
 
 	@Override
-	public MigrationEntry getById(Integer id) {
+	public Optional<MigrationEntry> getById(Integer id) {
 		return queryFirst("SELECT * FROM migrations WHERE id = :id", stmt -> {
 			stmt.setInt("id", id);
 		});

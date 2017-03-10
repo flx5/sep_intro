@@ -50,7 +50,7 @@ public class AbstractFakeRepositoryTest extends TestPocoAbstractRepositoryTest {
 	public final void testPredicate() {
 		TestPoco item = new TestPoco(newKey(), 42);
 		repository.insert(item);
-		TestPoco fromDb = repository.getByCondition(x -> x.getValue() == 42);
+		TestPoco fromDb = repository.getByCondition(x -> x.getValue() == 42).orElse(null);
 		
 		assertEquals(item, fromDb);
 	}

@@ -1,10 +1,10 @@
-package de.unipassau.prassefe.sepintro.model.migrations;
+package de.unipassau.prassefe.sepintro.migration;
 
 import de.unipassau.prassefe.sepintro.model.User;
 import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
 import de.unipassau.prassefe.sepintro.model.repository.UserRepository;
 
-public class UserTestMigration implements Migration {
+public class UserTestMigration extends AllMigration {
 
 	@Override
 	public long getId() {

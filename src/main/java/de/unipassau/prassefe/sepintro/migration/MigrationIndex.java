@@ -1,4 +1,4 @@
-package de.unipassau.prassefe.sepintro.model.migrations;
+package de.unipassau.prassefe.sepintro.migration;
 
 import java.util.Collection;
 import java.util.NavigableMap;
@@ -14,8 +14,8 @@ public class MigrationIndex {
 	public MigrationIndex(AbstractConfig config) {
 		this.config = config;
 		this.migrations = new TreeMap<>();
-
-		add(new InitialMigration());
+		// TODO Implement
+		// add(new InitialMigration());
 		add(new UserTestMigration());
 	}
 
@@ -25,34 +25,28 @@ public class MigrationIndex {
 
 	private long getCurrentVersion() {
 		try (MigrationRepository repo = config.getRepository(MigrationRepository.class)) {
-			MigrationEntry current = repo.getCurrentVersion();
-
-			if (current == null) {
-				return 0;
-			}
-
-			return current.getVersion();
+			return repo.getCurrentVersion().map(x -> x.getVersion()).orElse(0l);
 		}
 	}
 
 	public void migrateTo(long to) {
 		long current = getCurrentVersion();
-		
-		if(current <= to) {
+
+		if (current <= to) {
 			up(to);
 		} else {
 			down(to);
 		}
 	}
-	
+
 	private void up(long to) {
 		up(getCurrentVersion(), to);
 	}
-	
+
 	public void migrateToLatest() {
 		up(Long.MAX_VALUE);
 	}
-	
+
 	private void down(long to) {
 		down(getCurrentVersion(), to);
 	}

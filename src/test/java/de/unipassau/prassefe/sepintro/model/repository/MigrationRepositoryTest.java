@@ -3,14 +3,15 @@ package de.unipassau.prassefe.sepintro.model.repository;
 import static org.junit.Assert.*;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import de.unipassau.prassefe.sepintro.migration.MigrationEntry;
 import de.unipassau.prassefe.sepintro.model.config.Backend;
-import de.unipassau.prassefe.sepintro.model.migrations.MigrationEntry;
 
 @RunWith(Parameterized.class)
 public class MigrationRepositoryTest extends IntAbstractRepositoryTest<MigrationEntry> {
@@ -39,8 +40,10 @@ public class MigrationRepositoryTest extends IntAbstractRepositoryTest<Migration
 		MigrationEntry entry = new MigrationEntry(1);
 		entry.setId(1);
 		repository.insert(entry);
-		MigrationEntry current = repository.getCurrentVersion();
-		assertEquals(entry, current);
+		Optional<MigrationEntry> current = repository.getCurrentVersion();
+		
+		assertTrue(current.isPresent());
+		assertEquals(entry, current.get());
 	}
 	
 	@Test
@@ -55,8 +58,9 @@ public class MigrationRepositoryTest extends IntAbstractRepositoryTest<Migration
 		repository.insert(entry1);
 		repository.insert(entry2);
 		
-		MigrationEntry current = repository.getCurrentVersion();
-		assertEquals(entry2, current);
+		Optional<MigrationEntry> current = repository.getCurrentVersion();
+		assertTrue(current.isPresent());
+		assertEquals(entry2, current.get());
 	}
 	
 	@Test
@@ -71,8 +75,9 @@ public class MigrationRepositoryTest extends IntAbstractRepositoryTest<Migration
 		repository.insert(entry1);
 		repository.insert(entry2);
 		
-		MigrationEntry current = repository.getCurrentVersion();
-		assertEquals(entry2, current);
+		Optional<MigrationEntry> current = repository.getCurrentVersion();
+		assertTrue(current.isPresent());
+		assertEquals(entry2, current.get());
 	}
 
 	@Override
