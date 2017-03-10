@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import de.unipassau.prassefe.sepintro.migration.MigrationEntry;
+import de.unipassau.prassefe.sepintro.model.MigrationEntry;
 import de.unipassau.prassefe.sepintro.model.config.Backend;
 
 @RunWith(Parameterized.class)

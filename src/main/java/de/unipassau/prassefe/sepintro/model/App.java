@@ -5,7 +5,7 @@ import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 
-import de.unipassau.prassefe.sepintro.migration.MigrationIndex;
+import de.unipassau.prassefe.sepintro.migration.MigrationRunner;
 import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
 
 @ManagedBean(eager = true)
@@ -21,6 +21,6 @@ public class App {
 	
 	@PostConstruct
 	public void init() {
-		new MigrationIndex(config).migrateToLatest();
+		new MigrationRunner(config).migrateToLatest();
 	}
 }

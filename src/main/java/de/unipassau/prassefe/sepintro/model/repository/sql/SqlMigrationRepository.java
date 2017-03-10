@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Optional;
 
-import de.unipassau.prassefe.sepintro.migration.MigrationEntry;
+import de.unipassau.prassefe.sepintro.model.MigrationEntry;
 import de.unipassau.prassefe.sepintro.model.repository.MigrationRepository;
 
 public class SqlMigrationRepository extends AbstractRepository<MigrationEntry, Integer> implements MigrationRepository {
@@ -66,11 +66,5 @@ public class SqlMigrationRepository extends AbstractRepository<MigrationEntry, I
 		entry.setRunAt(result.getTimestamp("run_at").toLocalDateTime());
 
 		return entry;
-	}
-
-	@Override
-	public void create() {
-		nonQuery("CREATE TABLE migrations (" + "id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,"
-				+ "version BIGINT NOT NULL," + "run_at TIMESTAMP NOT NULL" + ")");
 	}
 }

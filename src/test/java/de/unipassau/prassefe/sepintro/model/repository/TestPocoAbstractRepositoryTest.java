@@ -3,7 +3,7 @@ package de.unipassau.prassefe.sepintro.model.repository;
 import de.unipassau.prassefe.sepintro.model.TestPoco;
 
 public abstract class TestPocoAbstractRepositoryTest extends IntAbstractRepositoryTest<TestPoco> {
-	public TestPocoAbstractRepositoryTest(CreateableRepository<TestPoco, Integer> repository) {
+	public TestPocoAbstractRepositoryTest(Repository<TestPoco, Integer> repository) {
 		super(repository);
 	}
 

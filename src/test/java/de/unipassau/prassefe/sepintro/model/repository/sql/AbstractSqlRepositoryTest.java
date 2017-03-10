@@ -19,6 +19,12 @@ public class AbstractSqlRepositoryTest extends TestPocoAbstractRepositoryTest {
 		this(new TestRepository());
 	}
 	
+	@Override
+	public void setUp() throws SQLException {
+		super.setUp();
+		this.repository.create();
+	}
+	
 	private AbstractSqlRepositoryTest(TestRepository repository) {
 		super(repository);
 		this.repository = repository;
@@ -30,11 +36,14 @@ public class AbstractSqlRepositoryTest extends TestPocoAbstractRepositoryTest {
 			super("test");
 		}
 
-		@Override
 		public void create() {
-			nonQuery("CREATE TABLE test (id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT, value BIGINT NOT NULL)");
+			nonQuery("CREATE TABLE IF NOT EXISTS test (id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT, value BIGINT NOT NULL)");
 		}
 
+		public void destroy() {
+			nonQuery("DROP TABLE test");
+		}
+		
 		@Override
 		public Optional<TestPoco> getById(Integer id) {
 			return queryFirst("SELECT * FROM test WHERE id = :id", stmt -> {

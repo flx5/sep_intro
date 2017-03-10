@@ -18,19 +18,19 @@ public class SQLUtil {
 		this.connection = connection;
 	}
 
-	public int nonQuery(String sql) throws SQLException {
+	public boolean nonQuery(String sql) throws SQLException {
 		return nonQuery(sql, null);
 	}
 
-	public int nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues) throws SQLException {
+	public boolean nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues) throws SQLException {
 		try (NamedPreparedStatement stmt = new NamedPreparedStatement(connection, sql)) {
 			if (setValues != null) {
 				setValues.accept(stmt);
 			}
-			return stmt.executeUpdate();
+			return stmt.execute();
 		}
 	}
-
+	
 	private ResultSet query(NamedPreparedStatement stmt,
 			ThrowingConsumer<NamedPreparedStatement, SQLException> setValues) throws SQLException {
 

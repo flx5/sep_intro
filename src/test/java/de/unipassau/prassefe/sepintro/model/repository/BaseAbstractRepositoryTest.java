@@ -7,33 +7,47 @@ import java.util.Optional;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.unipassau.prassefe.sepintro.migration.MigrationRunner;
+import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
 import de.unipassau.prassefe.sepintro.model.repository.sql.UnitConfig;
 
 public abstract class BaseAbstractRepositoryTest<T, K> {
 
-	private final CreateableRepository<T, K> repository;
+	private final Repository<T, K> repository;
 	private final boolean testDuplicates;
+	private static final AbstractConfig config = new UnitConfig();
 	
-	public BaseAbstractRepositoryTest(CreateableRepository<T, K> repository, boolean testDuplicates) {
+	public BaseAbstractRepositoryTest(Repository<T, K> repository, boolean testDuplicates) {
 		this.repository = repository;
 		this.testDuplicates = testDuplicates;
 	}
 	
-	public BaseAbstractRepositoryTest(CreateableRepository<T, K> repository) {
+	public BaseAbstractRepositoryTest(Repository<T, K> repository) {
 		this(repository, false);
+	}
+	
+	@BeforeClass
+	public static void setUpClass() {
+		new MigrationRunner(config).migrateToLatest();
+	}
+	
+	@BeforeClass
+	public static void tearDownClass() {
+		new MigrationRunner(config).migrateTo(0);
 	}
 	
 	@Before
 	public void setUp() throws SQLException {
-		this.repository.setConfig(new UnitConfig());
-		this.repository.create();
+		this.repository.setConfig(config);
+		this.repository.deleteAll();
 	}
 	
 	@After
 	public void tearDown() throws SQLException {
-		this.repository.destroy();
+		this.repository.deleteAll();
 		this.repository.close();
 	}
 	

@@ -1,7 +1,6 @@
 package de.unipassau.prassefe.sepintro.model.repository.sql;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -9,13 +8,13 @@ import java.util.List;
 import java.util.Optional;
 
 import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
-import de.unipassau.prassefe.sepintro.model.repository.CreateableRepository;
+import de.unipassau.prassefe.sepintro.model.repository.Repository;
 import de.unipassau.prassefe.sepintro.model.repository.RepositoryException;
 import de.unipassau.prassefe.sepintro.util.NamedPreparedStatement;
 import de.unipassau.prassefe.sepintro.util.SQLUtil;
 import de.unipassau.prassefe.sepintro.util.functional.ThrowingConsumer;
 
-public abstract class AbstractRepository<T, K> implements CreateableRepository<T, K> {
+public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 	private Connection connection;
 	private final String table;
 	private SQLUtil sqlUtil;
@@ -29,11 +28,11 @@ public abstract class AbstractRepository<T, K> implements CreateableRepository<T
 		return queryAll("SELECT * FROM " + table, null);
 	}
 
-	protected int nonQuery(String sql) {
+	protected boolean nonQuery(String sql) {
 		return nonQuery(sql, null);
 	}
 
-	protected int nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues) {
+	protected boolean nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues) {
 		try {
 			return sqlUtil.nonQuery(sql, setValues);
 		} catch (SQLException e) {
@@ -75,20 +74,21 @@ public abstract class AbstractRepository<T, K> implements CreateableRepository<T
 	}
 
 	protected boolean tableExists() {
+		/*
+		 * This is somewhat ugly, but the only reliable variant.
+		 * Using metadata produced cached results.
+		 */
 		try {
-			DatabaseMetaData meta = connection.getMetaData();
-
-			try (ResultSet res = meta.getTables(null, null, table, new String[] { "TABLE" })) {
-				return res.next();
-			}
+			sqlUtil.nonQuery("SELECT 1 from " + table + " LIMIT 1");
+			return true;
 		} catch (SQLException e) {
-			throw new RepositoryException(e);
+			return false;
 		}
 	}
 
 	@Override
-	public void destroy() {
-		nonQuery("DROP TABLE " + table);
+	public void deleteAll() {
+		nonQuery("DELETE FROM " + table);
 	}
 
 	@Override

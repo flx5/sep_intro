@@ -1,4 +1,4 @@
-package de.unipassau.prassefe.sepintro.migration;
+package de.unipassau.prassefe.sepintro.model;
 
 import java.time.LocalDateTime;
 

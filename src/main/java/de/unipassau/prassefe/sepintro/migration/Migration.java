@@ -13,7 +13,7 @@ public interface Migration {
 	/**
 	 * The id of the migration.
 	 * It is recommended to use the following format:
-	 * YYYYmmddHHii
+	 * YYYYmmdd<Digit><Digit>
 	 * @return The id.
 	 */
 	long getId();

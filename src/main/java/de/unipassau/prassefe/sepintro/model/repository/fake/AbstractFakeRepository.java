@@ -6,10 +6,10 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 
 import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
-import de.unipassau.prassefe.sepintro.model.repository.CreateableRepository;
+import de.unipassau.prassefe.sepintro.model.repository.Repository;
 import de.unipassau.prassefe.sepintro.model.repository.RepositoryException;
 
-public abstract class AbstractFakeRepository<T, K> implements CreateableRepository<T, K> {
+public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
 	protected abstract K getKey(T item);
 	protected abstract void setKey(T item);
 	protected abstract ConcurrentMap<K, T> getStorage();
@@ -60,12 +60,7 @@ public abstract class AbstractFakeRepository<T, K> implements CreateableReposito
 	}
 	
 	@Override
-	public void create() {
-		// do nothing
-	}
-
-	@Override
-	public void destroy() {
+	public void deleteAll() {
 		getStorage().clear();
 	}
 

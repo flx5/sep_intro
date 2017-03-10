@@ -12,6 +12,7 @@ public interface Repository<T, K> extends AutoCloseable {
 	void insert(T value);
 	void deleteById(K id);
 	void delete(T value);
+	void deleteAll();
 
 	@Override
 	void close(); 

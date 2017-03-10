@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import de.unipassau.prassefe.sepintro.migration.MigrationEntry;
+import de.unipassau.prassefe.sepintro.model.MigrationEntry;
 import de.unipassau.prassefe.sepintro.model.repository.MigrationRepository;
 
 public class FakeMigrationRepository extends AbstractFakeRepository<MigrationEntry, Integer>
