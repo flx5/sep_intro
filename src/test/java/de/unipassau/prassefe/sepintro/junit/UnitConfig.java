@@ -28,10 +28,11 @@ public class UnitConfig extends AbstractConfig {
 	@Override
 	public void reload() {
 		MysqlDataSource db = new MysqlDataSource();
-		// TODO Read this from environment variable!
-		db.setUser("sep");
-		db.setPassword("changeme");
-		db.setDatabaseName("junit");
+
+		db.setUser(System.getProperty("junit.db.user", ""));
+		db.setPassword(System.getProperty("junit.db.password", ""));
+		db.setDatabaseName(System.getProperty("junit.db.schema", ""));
+
 		setDataSource(db);
 	}
 
