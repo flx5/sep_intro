@@ -1,5 +1,7 @@
 package de.unipassau.prassefe.sepintro.model.config;
 
+import java.util.Optional;
+
 import javax.sql.DataSource;
 
 import de.unipassau.prassefe.sepintro.model.repository.Repository;
@@ -22,13 +24,13 @@ public abstract class AbstractConfig {
 	}
 
 	protected void setBackend(String backendName) {
-		Backend newBackend = EnumUtil.lookup(Backend.class, backendName);
+		Optional<Backend> newBackend = EnumUtil.lookup(Backend.class, backendName);
 		
-		if(newBackend == null) {
+		if(!newBackend.isPresent()) {
 			throw new InvalidConfiguration("Invalid backend " + backendName);
 		}
 		
-		setBackend(newBackend);
+		setBackend(newBackend.get());
 	}
 	
 	protected void setBackend(Backend newBackend) {

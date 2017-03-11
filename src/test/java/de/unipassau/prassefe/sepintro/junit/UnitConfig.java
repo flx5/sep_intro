@@ -7,20 +7,24 @@ import de.unipassau.prassefe.sepintro.model.config.Backend;
 
 public class UnitConfig extends AbstractConfig {
 
-	private static UnitConfig instance;
-	
-	public static synchronized UnitConfig getInstance() {
-		if(instance == null) {
-			instance = new UnitConfig();
+	private static UnitConfig defaultInstance;
+
+	public static synchronized UnitConfig defaultInstance() {
+		if (defaultInstance == null) {
+			defaultInstance = new UnitConfig();
 		}
-		
-		return instance;
+
+		return defaultInstance;
 	}
-	
-	private UnitConfig() {
-		// should be used as singleton
+
+	public UnitConfig() {
+		this(null);
 	}
-	
+
+	public UnitConfig(Backend backend) {
+		setBackend(backend);
+	}
+
 	@Override
 	public void reload() {
 		MysqlDataSource db = new MysqlDataSource();
@@ -28,13 +32,18 @@ public class UnitConfig extends AbstractConfig {
 		db.setUser("sep");
 		db.setPassword("changeme");
 		db.setDatabaseName("junit");
-		setBackend(Backend.SQL);
 		setDataSource(db);
 	}
-	
+
 	@Override
 	public Backend getBackend() {
-		throw new IllegalAccessError();
+		Backend backend = super.getBackend();
+
+		if (backend == null) {
+			throw new IllegalAccessError();
+		}
+		
+		return backend;
 	}
 
 }

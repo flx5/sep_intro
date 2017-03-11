@@ -4,7 +4,7 @@ import de.unipassau.prassefe.sepintro.model.User;
 import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
 import de.unipassau.prassefe.sepintro.model.repository.UserRepository;
 
-public class _2017031001_UserMigration extends AllMigration {
+public class M2017031001_UserMigration extends AllMigration {
 	@Override
 	public void up(AbstractConfig config) {
 		try(UserRepository repo = config.getRepository(UserRepository.class)) {

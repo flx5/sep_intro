@@ -22,7 +22,7 @@ public class NamedPreparedStatementTest {
 
 	@Before
 	public void setUp() throws SQLException {
-		this.connection = UnitConfig.getInstance().getDataSource().getConnection();
+		this.connection = UnitConfig.defaultInstance().getDataSource().getConnection();
 	}
 
 	@After

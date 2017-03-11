@@ -3,6 +3,7 @@ package de.unipassau.prassefe.sepintro.util;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +13,7 @@ import de.unipassau.prassefe.sepintro.util.functional.ThrowingFunction;
 
 public class SQLUtil {
 	private Connection connection;
-// TODO Not really a utility class anymore
+
 	public SQLUtil(Connection connection) {
 		this.connection = connection;
 	}
@@ -35,18 +36,25 @@ public class SQLUtil {
 
 			stmt.executeUpdate();
 
-			List<T> generatedIds = new ArrayList<>();
+			return readGeneratedIds(stmt.getStatement(), parseGeneratedKey);
+		}
+	}
 
-			if (parseGeneratedKey != null) {
-				try (ResultSet rs = stmt.getStatement().getGeneratedKeys()) {
-					while (rs.next()) {
-						generatedIds.add(parseGeneratedKey.apply(rs));
-					}
-				}
-			}
+	private <T> List<T> readGeneratedIds(Statement stmt, ThrowingFunction<ResultSet, T, SQLException> parseGeneratedKey) throws SQLException {
+		List<T> generatedIds = new ArrayList<>();
 
+		if(parseGeneratedKey == null) {
+			// return empty
 			return generatedIds;
 		}
+		
+		try (ResultSet rs = stmt.getGeneratedKeys()) {
+			while (rs.next()) {
+				generatedIds.add(parseGeneratedKey.apply(rs));
+			}
+		}
+
+		return generatedIds;
 	}
 
 	private ResultSet query(NamedPreparedStatement stmt,

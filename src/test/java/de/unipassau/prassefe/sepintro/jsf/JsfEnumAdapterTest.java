@@ -14,13 +14,16 @@ public class JsfEnumAdapterTest {
 		}
 	}
 	
-	/**
-	 * Test method for {@link de.unipassau.prassefe.sepintro.jsf.JsfEnumAdapter#lookup(java.lang.String)}.
-	 */
 	@Test
 	public final void testLookup() {
 		TestAdapter test = new TestAdapter();
-		assertEquals(TestEnum.OK ,test.lookup("OK"));
+		assertEquals(TestEnum.OK, test.lookup("OK"));
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public final void testInvalid() {
+		TestAdapter test = new TestAdapter();
+		test.lookup("42");
 	}
 
 }

@@ -10,6 +10,6 @@ public abstract class JsfEnumAdapter<T extends Enum<?>> {
 	}
 	
 	public T lookup(String name) {
-		return EnumUtil.lookup(enumClass, name);
+		return EnumUtil.lookup(enumClass, name).orElseThrow(() -> new IllegalArgumentException(name));
 	}
 }

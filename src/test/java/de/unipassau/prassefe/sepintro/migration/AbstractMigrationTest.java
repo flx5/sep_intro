@@ -20,17 +20,17 @@ public class AbstractMigrationTest {
 		}
 	}
 	
-	private static class _2017031001_ValidMigration extends EmptyMigration {}
-	private static class _Invalid2017031001_ValidMigration extends EmptyMigration {}
+	private static class M2017031001_ValidMigration extends EmptyMigration {}
+	private static class MInvalid2017031001_ValidMigration extends EmptyMigration {}
 	
 	@Test
 	public final void testValid() {
-		assertEquals(2017031001, new _2017031001_ValidMigration().getId());
+		assertEquals(2017031001, new M2017031001_ValidMigration().getId());
 	}
 	
 	@Test(expected=MigrationException.class)
 	public final void testInvalid() {
-		new _Invalid2017031001_ValidMigration().getId();
+		new MInvalid2017031001_ValidMigration().getId();
 	}
 
 }

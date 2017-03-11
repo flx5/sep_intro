@@ -19,7 +19,7 @@ public abstract class BaseAbstractRepositoryTest<T, K> {
 	public BaseAbstractRepositoryTest(Repository<T, K> repository, boolean testDuplicates) {
 		this.repository = repository;
 		this.testDuplicates = testDuplicates;
-		this.repository.setConfig(UnitConfig.getInstance());
+		this.repository.setConfig(UnitConfig.defaultInstance());
 	}
 	
 	public BaseAbstractRepositoryTest(Repository<T, K> repository) {
