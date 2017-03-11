@@ -1,9 +1,12 @@
 package de.unipassau.prassefe.sepintro.junit;
 
-import com.mysql.cj.jdbc.MysqlDataSource;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
 import de.unipassau.prassefe.sepintro.model.config.Backend;
+import de.unipassau.prassefe.sepintro.model.config.InvalidConfiguration;
 
 public class UnitConfig extends AbstractConfig {
 
@@ -27,13 +30,12 @@ public class UnitConfig extends AbstractConfig {
 
 	@Override
 	public void reload() {
-		MysqlDataSource db = new MysqlDataSource();
-
-		db.setUser(System.getProperty("junit.db.user", ""));
-		db.setPassword(System.getProperty("junit.db.password", ""));
-		db.setDatabaseName(System.getProperty("junit.db.schema", ""));
-
-		setDataSource(db);
+		try {
+			InitialContext ctx = new InitialContext(System.getProperties());
+			setDataSource((DataSource) ctx.lookup("junit/db"));
+		} catch (NamingException e) {
+			throw new InvalidConfiguration(e);
+		}
 	}
 
 	@Override
@@ -43,7 +45,7 @@ public class UnitConfig extends AbstractConfig {
 		if (backend == null) {
 			throw new IllegalAccessError();
 		}
-		
+
 		return backend;
 	}
 

@@ -19,4 +19,4 @@ install:
 
 script:
   # the following command line builds the project, runs the tests with coverage and then execute the SonarQube analysis
-  - mvn -Djunit.db.user=travis -Djunit.db.schema=travis_ci_test clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
+  - mvn "-Djunit/db=jdbc:postgresql:travis_ci_test?user=travis" clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
