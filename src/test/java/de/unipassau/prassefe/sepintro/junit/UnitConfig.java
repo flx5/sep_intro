@@ -4,6 +4,9 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import org.postgresql.ds.PGSimpleDataSource;
+import org.postgresql.osgi.PGDataSourceFactory;
+
 import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
 import de.unipassau.prassefe.sepintro.model.config.Backend;
 import de.unipassau.prassefe.sepintro.model.config.InvalidConfiguration;
@@ -30,12 +33,11 @@ public class UnitConfig extends AbstractConfig {
 
 	@Override
 	public void reload() {
-		try {
-			InitialContext ctx = new InitialContext(System.getProperties());
-			setDataSource((DataSource) ctx.lookup("junit/db"));
-		} catch (NamingException e) {
-			throw new InvalidConfiguration(e);
-		}
+		PGSimpleDataSource db = new PGSimpleDataSource();
+		db.setUser(System.getProperty("junit.db.user", ""));
+		db.setPassword(System.getProperty("junit.db.password", ""));
+		db.setDatabaseName(System.getProperty("junit.db.schema", ""));
+		setDataSource(db);
 	}
 
 	@Override
