@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -16,15 +17,10 @@ public class NamedPreparedStatement implements AutoCloseable {
 	private final Map<String, List<Integer>> paramMap;
 	private final PreparedStatement statement;
 
-	public NamedPreparedStatement(Connection connection, String query) throws SQLException
-	{
-		this(connection, query, null);
-	}
-	
-	public NamedPreparedStatement(Connection connection, String query, String[] generatedCols) throws SQLException {
+	public NamedPreparedStatement(Connection connection, String query) throws SQLException {
 		this.paramMap = new HashMap<>();
 		String parsedQuery = parse(query);
-		this.statement = connection.prepareStatement(parsedQuery, generatedCols);
+		this.statement = connection.prepareStatement(parsedQuery, Statement.RETURN_GENERATED_KEYS);
 	}
 
 	private final String parse(String query) {

@@ -48,7 +48,7 @@ public class AbstractFakeRepositoryTest extends TestPocoAbstractRepositoryTest {
 	
 	@Test
 	public final void testPredicate() {
-		TestPoco item = new TestPoco(newKey(), 42);
+		TestPoco item = new TestPoco(42);
 		repository.insert(item);
 		TestPoco fromDb = repository.getByCondition(x -> x.getValue() == 42).orElse(null);
 		

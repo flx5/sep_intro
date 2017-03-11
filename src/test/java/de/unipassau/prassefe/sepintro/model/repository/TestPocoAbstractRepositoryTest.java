@@ -8,8 +8,13 @@ public abstract class TestPocoAbstractRepositoryTest extends IntAbstractReposito
 	}
 
 	@Override
-	protected TestPoco newPoco(Integer id) {
-		return new TestPoco(id, 0);
+	protected TestPoco newPoco() {
+		return new TestPoco(0);
+	}
+	
+	@Override
+	protected Integer getKey(TestPoco poco) {
+		return poco.getId();
 	}
 
 	@Override

@@ -12,15 +12,18 @@ import org.junit.runners.Parameterized.Parameters;
 
 import de.unipassau.prassefe.sepintro.model.MigrationEntry;
 import de.unipassau.prassefe.sepintro.model.config.Backend;
+import de.unipassau.prassefe.sepintro.model.repository.fake.IntIdGenerator;
 
 @RunWith(Parameterized.class)
 public class MigrationRepositoryTest extends IntAbstractRepositoryTest<MigrationEntry> {
 
-	private MigrationRepository repository;
+	private final MigrationRepository repository;
+	private final IntIdGenerator generator;
 
 	public MigrationRepositoryTest(MigrationRepository repository) {
 		super(repository, false);
 		this.repository = repository;
+		this.generator = new IntIdGenerator();
 	}
 	
 	@Parameters
@@ -81,14 +84,17 @@ public class MigrationRepositoryTest extends IntAbstractRepositoryTest<Migration
 	}
 
 	@Override
-	protected MigrationEntry newPoco(Integer id) {
-		MigrationEntry entry = new MigrationEntry(id);
-		entry.setId(id);
-		return entry;
+	protected MigrationEntry newPoco() {
+		return new MigrationEntry(generator.next());
 	}
 
 	@Override
 	protected void changePoco(MigrationEntry poco) {
 		poco.setRunAt(LocalDateTime.now());
+	}
+	
+	@Override
+	protected Integer getKey(MigrationEntry poco) {
+		return poco.getId();
 	}
 }

@@ -49,7 +49,7 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 		nonQuerySingle(
 				"INSERT INTO users (username, passwordhash, realname, birthday, salt, street, street_nr, zipcode, city, country)"
 						+ " VALUES (:username, :password, :realname, :birthday, :salt, :street, :streetnr, :zipcode, :city, :country)",
-				stmt -> populateStatement(stmt, value), rs -> rs.getInt("id")).ifPresent(value::setId);
+				stmt -> populateStatement(stmt, value), rs -> rs.getInt(1)).ifPresent(value::setId);
 	}
 
 	@Override

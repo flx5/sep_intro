@@ -16,10 +16,6 @@ public class SqlMigrationRepository extends AbstractRepository<MigrationEntry, I
 	
 	@Override
 	public Optional<MigrationEntry> getCurrentVersion() {
-		if (!tableExists()) {
-			return Optional.empty();
-		}
-
 		return queryFirst("SELECT * FROM migrations ORDER BY run_at DESC,id DESC LIMIT 1");
 	}
 
@@ -44,7 +40,7 @@ public class SqlMigrationRepository extends AbstractRepository<MigrationEntry, I
 		nonQuerySingle("INSERT INTO migrations (version, run_at) VALUES (:version, :runAt)", stmt -> {
 			stmt.setLong("version", value.getVersion());
 			stmt.setTimestamp("runAt", Timestamp.valueOf(value.getRunAt()));
-		}, rs -> rs.getInt("id")).ifPresent(value::setId);
+		}, rs -> rs.getInt(1)).ifPresent(value::setId);
 	}
 
 	@Override

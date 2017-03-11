@@ -94,19 +94,6 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 		}
 	}
 
-	protected boolean tableExists() {
-		/*
-		 * This is somewhat ugly, but the only reliable variant. Using metadata
-		 * produced cached results.
-		 */
-		try {
-			sqlUtil.nonQuery("SELECT 1 from " + table + " LIMIT 1");
-			return true;
-		} catch (SQLException e) {
-			return false;
-		}
-	}
-
 	@Override
 	public void deleteAll() {
 		nonQuery("DELETE FROM " + table);

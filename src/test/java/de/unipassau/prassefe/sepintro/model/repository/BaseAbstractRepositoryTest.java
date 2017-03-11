@@ -37,29 +37,23 @@ public abstract class BaseAbstractRepositoryTest<T, K> {
 		this.repository.close();
 	}
 	
-	@Test
-	public final void testNotExisting() {
-		assertFalse(repository.getById(newKey()).isPresent());
-	}
-	
-	protected abstract T newPoco(K id);
-	protected abstract K newKey();
+	protected abstract T newPoco();
+	protected abstract K getKey(T poco);
 	protected abstract void changePoco(T poco);
 	
 	@Test
 	public final void testInsertAndDelete() {
-		K id = newKey();
-		T poco = newPoco(id);
+		T poco = newPoco();
 
 		repository.insert(poco);
-		Optional<T> fromDb = repository.getById(id);
+		Optional<T> fromDb = repository.getById(getKey(poco));
 
 		assertTrue(fromDb.isPresent());
 		assertEquals(poco, fromDb.get());
 		
 		repository.delete(poco);
 		
-		assertTrue(!repository.getById(id).isPresent());
+		assertTrue(!repository.getById(getKey(poco)).isPresent());
 	}
 
 	@Test(expected = RepositoryException.class)
@@ -68,7 +62,7 @@ public abstract class BaseAbstractRepositoryTest<T, K> {
 			throw new RepositoryException("no duplicate test required");
 		}
 		
-		T poco = newPoco(newKey());
+		T poco = newPoco();
 		
 		repository.insert(poco);
 		repository.insert(poco);
@@ -78,8 +72,8 @@ public abstract class BaseAbstractRepositoryTest<T, K> {
 	public final void testQueryAll() {
 		@SuppressWarnings("unchecked")
 		T[] expected = (T[])new Object[] {
-				newPoco(newKey()),
-				newPoco(newKey())
+				newPoco(),
+				newPoco()
 		};
 		
 		for(T poco : expected) {
@@ -93,9 +87,7 @@ public abstract class BaseAbstractRepositoryTest<T, K> {
 	
 	@Test
 	public final void testUpdate() {
-		K id = newKey();
-		
-		T poco = newPoco(id);
+		T poco = newPoco();
 		
 		repository.insert(poco);
 		
@@ -103,7 +95,7 @@ public abstract class BaseAbstractRepositoryTest<T, K> {
 		
 		repository.update(poco);
 		
-		Optional<T> fromDb = repository.getById(id);
+		Optional<T> fromDb = repository.getById(getKey(poco));
 		
 		assertTrue(fromDb.isPresent());
 		assertEquals(poco, fromDb.get());

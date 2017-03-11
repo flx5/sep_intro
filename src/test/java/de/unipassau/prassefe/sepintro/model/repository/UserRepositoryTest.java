@@ -11,12 +11,13 @@ import org.junit.runners.Parameterized.Parameters;
 
 import de.unipassau.prassefe.sepintro.model.User;
 import de.unipassau.prassefe.sepintro.model.repository.fake.FakeUserRepository;
+import de.unipassau.prassefe.sepintro.model.repository.fake.IntIdGenerator;
 import de.unipassau.prassefe.sepintro.model.repository.sql.SqlUserRepository;
 
 @RunWith(Parameterized.class)
 public class UserRepositoryTest extends IntAbstractRepositoryTest<User> {
-
-	private UserRepository repository;
+	private final IntIdGenerator generator = new IntIdGenerator();
+	private final UserRepository repository;
 
 	public UserRepositoryTest(UserRepository repository) {
 		super(repository);
@@ -52,8 +53,8 @@ public class UserRepositoryTest extends IntAbstractRepositoryTest<User> {
 
 	@Test(expected = RepositoryException.class)
 	public final void testUpdateDuplicate() {
-		User user1 = newPoco(newKey());
-		User user2 = newPoco(newKey());
+		User user1 = newPoco();
+		User user2 = newPoco();
 
 		this.repository.insert(user1);
 		this.repository.insert(user2);
@@ -65,13 +66,18 @@ public class UserRepositoryTest extends IntAbstractRepositoryTest<User> {
 	}
 
 	@Override
-	protected User newPoco(Integer id) {
-		return new User("name" + id, "Password");
+	protected User newPoco() {
+		return new User("name_" + generator.next(), "Password");
 	}
 
 	@Override
 	protected void changePoco(User poco) {
 		poco.setBirthday(poco.getBirthday().plusDays(1));
+	}
+	
+	@Override
+	protected Integer getKey(User poco) {
+		return poco.getId();
 	}
 
 }

@@ -11,15 +11,8 @@ import de.unipassau.prassefe.sepintro.util.functional.ThrowingConsumer;
 import de.unipassau.prassefe.sepintro.util.functional.ThrowingFunction;
 
 public class SQLUtil {
-	public abstract class Column<T> {
-		
-		private String name;
-
-		public abstract T get(ResultSet rs);
-	}
-
 	private Connection connection;
-
+// TODO Not really a utility class anymore
 	public SQLUtil(Connection connection) {
 		this.connection = connection;
 	}
@@ -30,7 +23,7 @@ public class SQLUtil {
 
 	public void nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues)
 			throws SQLException {
-		nonQuery(sql, null, null);
+		nonQuery(sql, setValues, null);
 	}
 
 	public <T> List<T> nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,

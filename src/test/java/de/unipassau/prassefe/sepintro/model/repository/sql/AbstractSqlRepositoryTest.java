@@ -1,12 +1,8 @@
 package de.unipassau.prassefe.sepintro.model.repository.sql;
 
-import static org.junit.Assert.*;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
-
-import org.junit.Test;
 
 import de.unipassau.prassefe.sepintro.model.TestPoco;
 import de.unipassau.prassefe.sepintro.model.repository.TestPocoAbstractRepositoryTest;
@@ -41,10 +37,6 @@ public class AbstractSqlRepositoryTest extends TestPocoAbstractRepositoryTest {
 					"CREATE TABLE IF NOT EXISTS test (id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT, value BIGINT NOT NULL)");
 		}
 
-		public void destroy() {
-			nonQuery("DROP TABLE test");
-		}
-
 		@Override
 		public Optional<TestPoco> getById(Integer id) {
 			return queryFirst("SELECT * FROM test WHERE id = :id", stmt -> {
@@ -65,7 +57,7 @@ public class AbstractSqlRepositoryTest extends TestPocoAbstractRepositoryTest {
 			nonQuerySingle("INSERT INTO test (id, value) VALUES (:id, :value)", stmt -> {
 				stmt.setInt("id", value.getId());
 				stmt.setLong("value", value.getValue());
-			}, rs -> rs.getInt("id")).ifPresent(value::setId);
+			}, rs -> rs.getInt(1)).ifPresent(value::setId);
 		}
 
 		@Override
@@ -84,14 +76,5 @@ public class AbstractSqlRepositoryTest extends TestPocoAbstractRepositoryTest {
 		protected TestPoco toItem(ResultSet result) throws SQLException {
 			return new TestPoco(result.getInt("id"), result.getLong("value"));
 		}
-	}
-
-	@Test
-	public final void testTableExists() {
-		assertTrue(repository.tableExists());
-		this.repository.destroy();
-		assertFalse(repository.tableExists());
-		this.repository.create();
-		assertTrue(repository.tableExists());
 	}
 }

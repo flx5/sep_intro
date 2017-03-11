@@ -4,6 +4,10 @@ public class TestPoco {
 	private int id;
 	private long value;
 
+	public TestPoco(long value) {
+		this(0, value);
+	}
+	
 	public TestPoco(int id, long value) {
 		this.id = id;
 		this.value = value;
