@@ -31,21 +31,21 @@ public class UserRepositoryTest extends IntAbstractRepositoryTest<User> {
 	@Test
 	public final void test() {
 		User user = new User("name", "Password");
-		
+
 		this.repository.insert(user);
-		
+
 		Optional<User> fromDb = this.repository.getByUserName("name");
 
 		assertTrue(fromDb.isPresent());
-		
+
 		fromDb.ifPresent(x -> {
 			assertTrue(x.verifyPassword("Password"));
 			assertFalse(x.verifyPassword("notPassword"));
 			assertFalse(x.verifyPassword("password"));
 		});
-		
+
 		repository.deleteByUsername("name");
-		
+
 		fromDb = this.repository.getByUserName("name");
 		assertFalse(fromDb.isPresent());
 	}
@@ -54,19 +54,19 @@ public class UserRepositoryTest extends IntAbstractRepositoryTest<User> {
 	public final void testUpdateDuplicate() {
 		User user1 = newPoco(newKey());
 		User user2 = newPoco(newKey());
-		
+
 		this.repository.insert(user1);
 		this.repository.insert(user2);
-		
+
 		user2.setUserName(user1.getUserName());
 		this.repository.update(user2);
+
+		System.out.println("HALT");
 	}
-	
+
 	@Override
 	protected User newPoco(Integer id) {
-		User user = new User("name" + id, "Password");
-		user.setId(id);
-		return user;
+		return new User("name" + id, "Password");
 	}
 
 	@Override

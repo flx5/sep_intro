@@ -74,5 +74,9 @@ public class MigrationRunner {
 	private void down(long from, long to) {
 		Collection<Migration> toRun = migrations.descendingMap().subMap(from, true, to, false).values();
 		migrate(toRun, x -> x.down(config));
+		
+		try (MigrationRepository repo = config.getRepository(MigrationRepository.class)) {
+			repo.insert(new MigrationEntry(to));
+		}
 	}
 }

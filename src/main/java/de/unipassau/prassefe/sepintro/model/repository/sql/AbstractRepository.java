@@ -13,6 +13,7 @@ import de.unipassau.prassefe.sepintro.model.repository.RepositoryException;
 import de.unipassau.prassefe.sepintro.util.NamedPreparedStatement;
 import de.unipassau.prassefe.sepintro.util.SQLUtil;
 import de.unipassau.prassefe.sepintro.util.functional.ThrowingConsumer;
+import de.unipassau.prassefe.sepintro.util.functional.ThrowingFunction;
 
 public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 	private Connection connection;
@@ -28,13 +29,33 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 		return queryAll("SELECT * FROM " + table, null);
 	}
 
-	protected boolean nonQuery(String sql) {
-		return nonQuery(sql, null);
+	protected void nonQuery(String sql) {
+		nonQuery(sql, null);
 	}
 
-	protected boolean nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues) {
+	protected void nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues) {
 		try {
-			return sqlUtil.nonQuery(sql, setValues);
+			sqlUtil.nonQuery(sql, setValues);
+		} catch (SQLException e) {
+			throw new RepositoryException(e);
+		}
+	}
+
+	protected Optional<K> nonQuerySingle(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,
+			ThrowingFunction<ResultSet, K, SQLException> parseGeneratedKey) {
+		List<K> generated = nonQuery(sql, setValues, parseGeneratedKey);
+
+		if (generated.isEmpty()) {
+			return Optional.empty();
+		} else {
+			return Optional.of(generated.get(0));
+		}
+	}
+
+	private List<K> nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,
+			ThrowingFunction<ResultSet, K, SQLException> parseGeneratedKey) {
+		try {
+			return sqlUtil.nonQuery(sql, setValues, parseGeneratedKey);
 		} catch (SQLException e) {
 			throw new RepositoryException(e);
 		}
@@ -75,8 +96,8 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 
 	protected boolean tableExists() {
 		/*
-		 * This is somewhat ugly, but the only reliable variant.
-		 * Using metadata produced cached results.
+		 * This is somewhat ugly, but the only reliable variant. Using metadata
+		 * produced cached results.
 		 */
 		try {
 			sqlUtil.nonQuery("SELECT 1 from " + table + " LIMIT 1");

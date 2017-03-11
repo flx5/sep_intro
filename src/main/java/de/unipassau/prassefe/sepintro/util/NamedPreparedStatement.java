@@ -16,10 +16,15 @@ public class NamedPreparedStatement implements AutoCloseable {
 	private final Map<String, List<Integer>> paramMap;
 	private final PreparedStatement statement;
 
-	public NamedPreparedStatement(Connection connection, String query) throws SQLException {
+	public NamedPreparedStatement(Connection connection, String query) throws SQLException
+	{
+		this(connection, query, null);
+	}
+	
+	public NamedPreparedStatement(Connection connection, String query, String[] generatedCols) throws SQLException {
 		this.paramMap = new HashMap<>();
 		String parsedQuery = parse(query);
-		this.statement = connection.prepareStatement(parsedQuery);
+		this.statement = connection.prepareStatement(parsedQuery, generatedCols);
 	}
 
 	private final String parse(String query) {

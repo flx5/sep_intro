@@ -12,24 +12,24 @@ import de.unipassau.prassefe.sepintro.model.TestPoco;
 import de.unipassau.prassefe.sepintro.model.repository.TestPocoAbstractRepositoryTest;
 
 public class AbstractSqlRepositoryTest extends TestPocoAbstractRepositoryTest {
-	
+
 	private TestRepository repository;
-	
+
 	public AbstractSqlRepositoryTest() {
 		this(new TestRepository());
 	}
-	
+
 	@Override
 	public void setUp() throws SQLException {
-		super.setUp();
 		this.repository.create();
+		super.setUp();
 	}
-	
+
 	private AbstractSqlRepositoryTest(TestRepository repository) {
 		super(repository);
 		this.repository = repository;
 	}
-	
+
 	private static class TestRepository extends AbstractRepository<TestPoco, Integer> {
 
 		public TestRepository() {
@@ -37,13 +37,14 @@ public class AbstractSqlRepositoryTest extends TestPocoAbstractRepositoryTest {
 		}
 
 		public void create() {
-			nonQuery("CREATE TABLE IF NOT EXISTS test (id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT, value BIGINT NOT NULL)");
+			nonQuery(
+					"CREATE TABLE IF NOT EXISTS test (id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT, value BIGINT NOT NULL)");
 		}
 
 		public void destroy() {
 			nonQuery("DROP TABLE test");
 		}
-		
+
 		@Override
 		public Optional<TestPoco> getById(Integer id) {
 			return queryFirst("SELECT * FROM test WHERE id = :id", stmt -> {
@@ -61,10 +62,10 @@ public class AbstractSqlRepositoryTest extends TestPocoAbstractRepositoryTest {
 
 		@Override
 		public void insert(TestPoco value) {
-			nonQuery("INSERT INTO test (id, value) VALUES (:id, :value)", stmt -> {
+			nonQuerySingle("INSERT INTO test (id, value) VALUES (:id, :value)", stmt -> {
 				stmt.setInt("id", value.getId());
 				stmt.setLong("value", value.getValue());
-			});
+			}, rs -> rs.getInt("id")).ifPresent(value::setId);
 		}
 
 		@Override
@@ -84,8 +85,7 @@ public class AbstractSqlRepositoryTest extends TestPocoAbstractRepositoryTest {
 			return new TestPoco(result.getInt("id"), result.getLong("value"));
 		}
 	}
-	
-	
+
 	@Test
 	public final void testTableExists() {
 		assertTrue(repository.tableExists());

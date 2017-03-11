@@ -11,6 +11,12 @@ import de.unipassau.prassefe.sepintro.util.functional.ThrowingConsumer;
 import de.unipassau.prassefe.sepintro.util.functional.ThrowingFunction;
 
 public class SQLUtil {
+	public abstract class Column<T> {
+		
+		private String name;
+
+		public abstract T get(ResultSet rs);
+	}
 
 	private Connection connection;
 
@@ -18,19 +24,38 @@ public class SQLUtil {
 		this.connection = connection;
 	}
 
-	public boolean nonQuery(String sql) throws SQLException {
-		return nonQuery(sql, null);
+	public void nonQuery(String sql) throws SQLException {
+		nonQuery(sql, null);
 	}
 
-	public boolean nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues) throws SQLException {
+	public void nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues)
+			throws SQLException {
+		nonQuery(sql, null, null);
+	}
+
+	public <T> List<T> nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,
+			ThrowingFunction<ResultSet, T, SQLException> parseGeneratedKey) throws SQLException {
 		try (NamedPreparedStatement stmt = new NamedPreparedStatement(connection, sql)) {
 			if (setValues != null) {
 				setValues.accept(stmt);
 			}
-			return stmt.execute();
+
+			stmt.executeUpdate();
+
+			List<T> generatedIds = new ArrayList<>();
+
+			if (parseGeneratedKey != null) {
+				try (ResultSet rs = stmt.getStatement().getGeneratedKeys()) {
+					while (rs.next()) {
+						generatedIds.add(parseGeneratedKey.apply(rs));
+					}
+				}
+			}
+
+			return generatedIds;
 		}
 	}
-	
+
 	private ResultSet query(NamedPreparedStatement stmt,
 			ThrowingConsumer<NamedPreparedStatement, SQLException> setValues) throws SQLException {
 
@@ -56,8 +81,9 @@ public class SQLUtil {
 
 		}
 	}
-	
-	public <T> Optional<T> queryFirst(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues, ThrowingFunction<ResultSet, T, SQLException> toItem) throws SQLException {
+
+	public <T> Optional<T> queryFirst(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,
+			ThrowingFunction<ResultSet, T, SQLException> toItem) throws SQLException {
 		try (NamedPreparedStatement stmt = new NamedPreparedStatement(this.connection, sql)) {
 			ResultSet result = query(stmt, setValues);
 			if (result.first()) {

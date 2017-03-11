@@ -46,10 +46,10 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 
 	@Override
 	public void insert(User value) {
-		nonQuery(
+		nonQuerySingle(
 				"INSERT INTO users (username, passwordhash, realname, birthday, salt, street, street_nr, zipcode, city, country)"
 						+ " VALUES (:username, :password, :realname, :birthday, :salt, :street, :streetnr, :zipcode, :city, :country)",
-				stmt -> populateStatement(stmt, value));
+				stmt -> populateStatement(stmt, value), rs -> rs.getInt("id")).ifPresent(value::setId);
 	}
 
 	@Override
@@ -61,8 +61,8 @@ public class SqlUserRepository extends AbstractRepository<User, Integer> impleme
 
 	@Override
 	protected User toItem(ResultSet result) throws SQLException {
-		Address address = new Address(result.getString("street"), result.getInt("street_nr"), result.getString("zipcode"),
-				result.getString("city"), result.getString("country"));
+		Address address = new Address(result.getString("street"), result.getInt("street_nr"),
+				result.getString("zipcode"), result.getString("city"), result.getString("country"));
 		return new User(result.getInt("id"), result.getString("username"), result.getBytes("passwordhash"),
 				result.getString("realname"), result.getDate("birthday").toLocalDate(), address,
 				result.getBytes("salt"));

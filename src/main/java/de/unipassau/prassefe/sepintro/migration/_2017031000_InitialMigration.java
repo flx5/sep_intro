@@ -9,7 +9,7 @@ public class _2017031000_InitialMigration extends SqlMigration {
 
 	@Override
 	public void up(SQLUtil sqlUtil) throws SQLException {	
-		sqlUtil.nonQuery("CREATE TABLE migrations (" + "id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,"
+		sqlUtil.nonQuery("CREATE TABLE IF NOT EXISTS migrations (" + "id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,"
 				+ "version BIGINT NOT NULL," + "run_at TIMESTAMP NOT NULL" + ")");
 		
 		sqlUtil.nonQuery("CREATE TABLE users (" + "id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,"
@@ -22,7 +22,6 @@ public class _2017031000_InitialMigration extends SqlMigration {
 	@Override
 	public void down(SQLUtil sqlUtil) throws SQLException {
 		sqlUtil.nonQuery("DROP TABLE users");
-		sqlUtil.nonQuery("DROP TABLE migrations");
 	}
 
 }

@@ -14,6 +14,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.unipassau.prassefe.sepintro.junit.UnitConfig;
 import de.unipassau.prassefe.sepintro.util.NamedPreparedStatement;
 
 public class NamedPreparedStatementTest {
@@ -21,7 +22,7 @@ public class NamedPreparedStatementTest {
 
 	@Before
 	public void setUp() throws SQLException {
-		this.connection = new UnitConfig().getDataSource().getConnection();
+		this.connection = UnitConfig.getInstance().getDataSource().getConnection();
 	}
 
 	@After

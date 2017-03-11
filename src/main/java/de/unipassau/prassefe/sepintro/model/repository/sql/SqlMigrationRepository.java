@@ -41,10 +41,10 @@ public class SqlMigrationRepository extends AbstractRepository<MigrationEntry, I
 
 	@Override
 	public void insert(MigrationEntry value) {
-		nonQuery("INSERT INTO migrations (version, run_at) VALUES (:version, :runAt)", stmt -> {
+		nonQuerySingle("INSERT INTO migrations (version, run_at) VALUES (:version, :runAt)", stmt -> {
 			stmt.setLong("version", value.getVersion());
 			stmt.setTimestamp("runAt", Timestamp.valueOf(value.getRunAt()));
-		});
+		}, rs -> rs.getInt("id")).ifPresent(value::setId);
 	}
 
 	@Override

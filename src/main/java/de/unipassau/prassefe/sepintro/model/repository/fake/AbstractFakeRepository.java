@@ -29,7 +29,7 @@ public abstract class AbstractFakeRepository<T, K> implements Repository<T, K> {
 		if (this.getStorage().containsKey(getKey(value))) {
 			throw new RepositoryException("Value with key exists already!");
 		}
-
+		
 		setKey(value);
 
 		this.update(value);
