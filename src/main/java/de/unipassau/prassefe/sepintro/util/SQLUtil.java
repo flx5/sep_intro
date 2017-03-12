@@ -64,7 +64,10 @@ public class SQLUtil {
 			nonQuery("ALTER TABLE " + table + " MODIFY COLUMN " + column + " INTEGER auto_increment");
 			break;
 		case PostgreSQL:
-			nonQuery("ALTER TABLE " + table + " ALTER COLUMN " + column + " TYPE SERIAL");
+			String sequenceName = table + "_" + column + "_seq";
+			nonQuery("CREATE SEQUENCE " + sequenceName + " START WITH ");
+			nonQuery("ALTER TABLE " + table + " ALTER COLUMN " + column + " SET DEFAULT nextval('" + sequenceName + "')");
+			nonQuery("ALTER SEQUENCE " + sequenceName + " OWNED BY " + table + "." + column);
 			break;
 		}
 	}
