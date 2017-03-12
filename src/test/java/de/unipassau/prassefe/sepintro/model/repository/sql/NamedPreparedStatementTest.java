@@ -70,7 +70,7 @@ public class NamedPreparedStatementTest {
 		}
 	}
 	
-	@Test(expected=SQLSyntaxErrorException.class)
+	@Test(expected=SQLException.class)
 	public final void invalidParamNameStart() throws SQLException {
 		try (NamedPreparedStatement stmt = new NamedPreparedStatement(connection, "SELECT :#na&me")) {
 			stmt.execute();
@@ -87,7 +87,7 @@ public class NamedPreparedStatementTest {
 		}
 	}
 	
-	@Test(expected=SQLSyntaxErrorException.class)
+	@Test(expected=SQLException.class)
 	public final void atEnd() throws SQLException {
 		try (NamedPreparedStatement stmt = new NamedPreparedStatement(connection, "SELECT :")) {
 			stmt.execute();

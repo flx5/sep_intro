@@ -55,18 +55,6 @@ public abstract class BaseAbstractRepositoryTest<T, K> {
 		
 		assertTrue(!repository.getById(getKey(poco)).isPresent());
 	}
-
-	@Test(expected = RepositoryException.class)
-	public final void testInsertDuplicate() {
-		if(!testDuplicates) {
-			throw new RepositoryException("no duplicate test required");
-		}
-		
-		T poco = newPoco();
-		
-		repository.insert(poco);
-		repository.insert(poco);
-	}
 	
 	@Test
 	public final void testQueryAll() {
