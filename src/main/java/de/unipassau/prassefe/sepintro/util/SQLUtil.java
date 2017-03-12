@@ -70,12 +70,16 @@ public class SQLUtil {
 			break;
 		case PostgreSQL:
 			String sequenceName = table + "_" + column + "_seq";
+
+			StringBuilder query = new StringBuilder();
 			
-			nonQuery("DROP SEQUENCE IF EXISTS " + sequenceName);
-			nonQuery("CREATE SEQUENCE " + sequenceName);
-			nonQuery("ALTER TABLE " + table + " ALTER COLUMN " + column + " SET DEFAULT nextval('" + sequenceName
-					+ "')");
-			nonQuery("ALTER SEQUENCE " + sequenceName + " OWNED BY " + table + "." + column);
+			query.append("IF NOT EXISTS (SELECT 0 FROM pg_class where relname = '"+sequenceName+"' ) THEN\n");
+			query.append("CREATE SEQUENCE " + sequenceName + ";");
+			query.append("ALTER TABLE " + table + " ALTER COLUMN " + column + " SET DEFAULT nextval('" + sequenceName
+					+ "');");
+			query.append("ALTER SEQUENCE " + sequenceName + " OWNED BY " + table + "." + column + ";");
+			query.append("\nEND IF;");
+			nonQuery(query.toString());
 			break;
 		}
 	}
