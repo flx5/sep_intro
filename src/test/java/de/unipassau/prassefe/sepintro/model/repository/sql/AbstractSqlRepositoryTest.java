@@ -4,27 +4,24 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
+import org.junit.BeforeClass;
+
 import de.unipassau.prassefe.sepintro.model.TestPoco;
 import de.unipassau.prassefe.sepintro.model.repository.RepositoryException;
 import de.unipassau.prassefe.sepintro.model.repository.TestPocoAbstractRepositoryTest;
 
 public class AbstractSqlRepositoryTest extends TestPocoAbstractRepositoryTest {
 
-	private TestRepository repository;
-
 	public AbstractSqlRepositoryTest() {
-		this(new TestRepository());
+		super(new TestRepository());
 	}
 
-	@Override
-	public void setUp() throws SQLException {
-		this.repository.create();
-		super.setUp();
-	}
-
-	private AbstractSqlRepositoryTest(TestRepository repository) {
-		super(repository);
-		this.repository = repository;
+	@BeforeClass
+	public static void setUpClass() throws SQLException {
+		try(TestRepository repo = new TestRepository())
+		{
+			repo.create();
+		}
 	}
 
 	private static class TestRepository extends AbstractRepository<TestPoco, Integer> {
