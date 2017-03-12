@@ -40,7 +40,7 @@ public class MigrationRunner {
 						"CREATE TABLE IF NOT EXISTS migrations (id INTEGER NOT NULL PRIMARY KEY,"
 								+ "version BIGINT NOT NULL, run_at TIMESTAMP NOT NULL" + ")");
 				
-				sqlUtil.createPrimaryKey("migrations", "id");
+				sqlUtil.createAutoIncrement("migrations", "id");
 			} catch (SQLException e) {
 				throw new MigrationException(e);
 			}

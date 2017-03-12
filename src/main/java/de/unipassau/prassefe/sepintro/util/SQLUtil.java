@@ -63,13 +63,15 @@ public class SQLUtil {
 		}
 	}
 
-	public void createPrimaryKey(String table, String column) throws SQLException {
+	public void createAutoIncrement(String table, String column) throws SQLException {
 		switch (getDatabaseType()) {
 		case MySQL:
 			nonQuery("ALTER TABLE " + table + " MODIFY COLUMN " + column + " INTEGER auto_increment");
 			break;
 		case PostgreSQL:
 			String sequenceName = table + "_" + column + "_seq";
+			
+			nonQuery("DROP SEQUENCE IF EXISTS " + sequenceName);
 			nonQuery("CREATE SEQUENCE " + sequenceName);
 			nonQuery("ALTER TABLE " + table + " ALTER COLUMN " + column + " SET DEFAULT nextval('" + sequenceName
 					+ "')");

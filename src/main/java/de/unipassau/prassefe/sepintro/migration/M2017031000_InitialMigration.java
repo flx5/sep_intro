@@ -16,7 +16,7 @@ public class M2017031000_InitialMigration extends SqlMigration {
 				+ "street VARCHAR(20)," + "street_nr INTEGER," + "zipcode VARCHAR(10)," + "city VARCHAR(20),"
 				+ "country VARCHAR(20)" + ")");
 
-		sqlUtil.createPrimaryKey("users", "id");
+		sqlUtil.createAutoIncrement("users", "id");
 	}
 
 	@Override

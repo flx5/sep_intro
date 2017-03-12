@@ -37,7 +37,7 @@ public class AbstractSqlRepositoryTest extends TestPocoAbstractRepositoryTest {
 					"CREATE TABLE IF NOT EXISTS test (id INTEGER NOT NULL PRIMARY KEY, value BIGINT NOT NULL)");
 			
 			try {
-				getSqlUtil().createPrimaryKey("test", "id");
+				getSqlUtil().createAutoIncrement("test", "id");
 			} catch (SQLException e) {
 				throw new RepositoryException(e);
 			}
