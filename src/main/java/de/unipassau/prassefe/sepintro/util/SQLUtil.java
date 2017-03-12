@@ -141,7 +141,7 @@ public class SQLUtil {
 			ThrowingFunction<ResultSet, T, SQLException> toItem) throws SQLException {
 		try (NamedPreparedStatement stmt = new NamedPreparedStatement(this.connection, sql)) {
 			ResultSet result = query(stmt, setValues);
-			if (result.first()) {
+			if (result.next()) {
 				return Optional.of(toItem.apply(result));
 			} else {
 				return Optional.empty();
