@@ -73,12 +73,16 @@ public class SQLUtil {
 
 			StringBuilder query = new StringBuilder();
 			
+			query.append("do $$\n");
+			query.append("begin\n");
 			query.append("IF NOT EXISTS (SELECT 0 FROM pg_class where relname = '"+sequenceName+"' ) THEN\n");
 			query.append("CREATE SEQUENCE " + sequenceName + ";");
 			query.append("ALTER TABLE " + table + " ALTER COLUMN " + column + " SET DEFAULT nextval('" + sequenceName
 					+ "');");
 			query.append("ALTER SEQUENCE " + sequenceName + " OWNED BY " + table + "." + column + ";");
 			query.append("\nEND IF;");
+			query.append("end\n");
+			query.append("$$\n");
 			nonQuery(query.toString());
 			break;
 		}
