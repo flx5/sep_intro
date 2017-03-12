@@ -65,7 +65,7 @@ public class SQLUtil {
 			break;
 		case PostgreSQL:
 			String sequenceName = table + "_" + column + "_seq";
-			nonQuery("CREATE SEQUENCE " + sequenceName + " START WITH ");
+			nonQuery("CREATE SEQUENCE " + sequenceName);
 			nonQuery("ALTER TABLE " + table + " ALTER COLUMN " + column + " SET DEFAULT nextval('" + sequenceName + "')");
 			nonQuery("ALTER SEQUENCE " + sequenceName + " OWNED BY " + table + "." + column);
 			break;
