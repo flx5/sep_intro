@@ -79,7 +79,7 @@ public class NamedPreparedStatementTest {
 	
 	@Test
 	public final void doubleQuotedParameterSelect2() throws SQLException {
-		try (NamedPreparedStatement stmt = new NamedPreparedStatement(connection, "SELECT \":param\", :actual")) {
+		try (NamedPreparedStatement stmt = new NamedPreparedStatement(connection, "SELECT '\":param\"', :actual")) {
 			stmt.setString("actual", "YAY");
 			try (ResultSet result = stmt.executeQuery()) {
 				assertTrue(result.next());
