@@ -70,25 +70,6 @@ public class NamedPreparedStatementTest {
 		}
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
-	public final void doubleQuotedParameterSelect() throws SQLException {
-		try (NamedPreparedStatement stmt = new NamedPreparedStatement(connection, "SELECT \":param\"")) {
-			stmt.setString("param", "FAIL");
-		}
-	}
-	
-	@Test
-	public final void doubleQuotedParameterSelect2() throws SQLException {
-		try (NamedPreparedStatement stmt = new NamedPreparedStatement(connection, "SELECT '\":param\"', :actual")) {
-			stmt.setString("actual", "YAY");
-			try (ResultSet result = stmt.executeQuery()) {
-				assertTrue(result.next());
-				assertEquals(":param", result.getString(1));
-				assertEquals("YAY", result.getString(2));
-			}
-		}
-	}
-	
 	@Test(expected=SQLSyntaxErrorException.class)
 	public final void invalidParamNameStart() throws SQLException {
 		try (NamedPreparedStatement stmt = new NamedPreparedStatement(connection, "SELECT :#na&me")) {

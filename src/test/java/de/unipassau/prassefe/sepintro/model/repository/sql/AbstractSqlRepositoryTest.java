@@ -60,8 +60,7 @@ public class AbstractSqlRepositoryTest extends TestPocoAbstractRepositoryTest {
 
 		@Override
 		public void insert(TestPoco value) {
-			nonQuerySingle("INSERT INTO test (id, value) VALUES (:id, :value)", stmt -> {
-				stmt.setInt("id", value.getId());
+			nonQuerySingle("INSERT INTO test (value) VALUES (:value)", stmt -> {
 				stmt.setLong("value", value.getValue());
 			}, rs -> rs.getInt(1)).ifPresent(value::setId);
 		}
