@@ -37,8 +37,10 @@ public class MigrationRunner {
 			try (Connection conn = config.getDataSource().getConnection()) {
 				SQLUtil sqlUtil = new SQLUtil(conn);
 				sqlUtil.nonQuery(
-						"CREATE TABLE IF NOT EXISTS migrations (" + "id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,"
-								+ "version BIGINT NOT NULL," + "run_at TIMESTAMP NOT NULL" + ")");
+						"CREATE TABLE IF NOT EXISTS migrations (id INTEGER NOT NULL PRIMARY KEY,"
+								+ "version BIGINT NOT NULL, run_at TIMESTAMP NOT NULL" + ")");
+				
+				sqlUtil.createPrimaryKey("migrations", "id");
 			} catch (SQLException e) {
 				throw new MigrationException(e);
 			}

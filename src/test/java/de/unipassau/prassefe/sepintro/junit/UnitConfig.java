@@ -1,15 +1,9 @@
 package de.unipassau.prassefe.sepintro.junit;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-
 import org.postgresql.ds.PGSimpleDataSource;
-import org.postgresql.osgi.PGDataSourceFactory;
 
 import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
 import de.unipassau.prassefe.sepintro.model.config.Backend;
-import de.unipassau.prassefe.sepintro.model.config.InvalidConfiguration;
 
 public class UnitConfig extends AbstractConfig {
 

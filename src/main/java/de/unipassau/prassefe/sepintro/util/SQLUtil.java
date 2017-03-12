@@ -5,19 +5,70 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import de.unipassau.prassefe.sepintro.util.functional.ThrowingConsumer;
 import de.unipassau.prassefe.sepintro.util.functional.ThrowingFunction;
 
 public class SQLUtil {
+	
+	/**
+	 * Known Database types
+	 * @author Felix Prasse
+	 * @see <a href="http://stackoverflow.com/a/254220">List of common values.</a>
+	 */
+	public enum DatabaseType {
+		MySQL("MySQL"),
+		PostgreSQL("PostgreSQL")
+		;
+		
+		
+		private final Pattern namePattern;
+		
+		private DatabaseType(String namePattern) {
+			this.namePattern = Pattern.compile(namePattern);
+		}
+		
+		private boolean matches(String name) {
+			return namePattern.matcher(name).matches();
+		}
+		
+		public static Optional<DatabaseType> getByName(String name) {
+			return Arrays.stream(values()).filter(x -> x.matches(name)).findAny();
+		}
+	}
+	
 	private Connection connection;
 
 	public SQLUtil(Connection connection) {
 		this.connection = connection;
 	}
 
+	private Optional<DatabaseType> getDatabaseType() throws SQLException {
+		String name = this.connection.getMetaData().getDatabaseProductName();
+		return DatabaseType.getByName(name);
+	}
+	
+	public void createPrimaryKey(String table, String column) throws SQLException {
+		Optional<DatabaseType> type = getDatabaseType();
+		
+		if(!type.isPresent()) {
+			throw new UnsupportedOperationException("Unknown database type");
+		}
+		
+		switch(type.get()) {
+		case MySQL:
+			nonQuery("ALTER TABLE " + table + " MODIFY COLUMN " + column + " INTEGER auto_increment");
+			break;
+		case PostgreSQL:
+			nonQuery("ALTER TABLE " + table + " ALTER COLUMN " + column + " TYPE SERIAL");
+			break;
+		}
+	}
+	
 	public void nonQuery(String sql) throws SQLException {
 		nonQuery(sql, null);
 	}
