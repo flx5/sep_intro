@@ -14,64 +14,70 @@ import de.unipassau.prassefe.sepintro.util.functional.ThrowingConsumer;
 import de.unipassau.prassefe.sepintro.util.functional.ThrowingFunction;
 
 public class SQLUtil {
-	
+
 	/**
 	 * Known Database types
+	 * 
 	 * @author Felix Prasse
-	 * @see <a href="http://stackoverflow.com/a/254220">List of common values.</a>
+	 * @see <a href="http://stackoverflow.com/a/254220">List of common
+	 *      values.</a>
 	 */
 	public enum DatabaseType {
-		MySQL("MySQL"),
-		PostgreSQL("PostgreSQL")
-		;
-		
-		
+		MySQL("MySQL"), PostgreSQL("PostgreSQL");
+
 		private final Pattern namePattern;
-		
+
 		private DatabaseType(String namePattern) {
 			this.namePattern = Pattern.compile(namePattern);
 		}
-		
+
 		private boolean matches(String name) {
 			return namePattern.matcher(name).matches();
 		}
-		
-		public static Optional<DatabaseType> getByName(String name) {
-			return Arrays.stream(values()).filter(x -> x.matches(name)).findAny();
+
+		public static DatabaseType getByName(String name) {
+			return Arrays.stream(values()).filter(x -> x.matches(name)).findAny()
+					.orElseThrow(() -> new UnsupportedOperationException("Unknown database type"));
 		}
 	}
-	
+
 	private Connection connection;
 
 	public SQLUtil(Connection connection) {
 		this.connection = connection;
 	}
 
-	private Optional<DatabaseType> getDatabaseType() throws SQLException {
+	private DatabaseType getDatabaseType() throws SQLException {
 		String name = this.connection.getMetaData().getDatabaseProductName();
 		return DatabaseType.getByName(name);
 	}
-	
-	public void createPrimaryKey(String table, String column) throws SQLException {
-		Optional<DatabaseType> type = getDatabaseType();
-		
-		if(!type.isPresent()) {
+
+	public String getVariableBinaryType(int length) throws SQLException {
+		switch (getDatabaseType()) {
+		case MySQL:
+			return "VARBINARY(" + length + ")";
+		case PostgreSQL:
+			return "BYTEA";
+		default:
 			throw new UnsupportedOperationException("Unknown database type");
 		}
-		
-		switch(type.get()) {
+	}
+
+	public void createPrimaryKey(String table, String column) throws SQLException {
+		switch (getDatabaseType()) {
 		case MySQL:
 			nonQuery("ALTER TABLE " + table + " MODIFY COLUMN " + column + " INTEGER auto_increment");
 			break;
 		case PostgreSQL:
 			String sequenceName = table + "_" + column + "_seq";
 			nonQuery("CREATE SEQUENCE " + sequenceName);
-			nonQuery("ALTER TABLE " + table + " ALTER COLUMN " + column + " SET DEFAULT nextval('" + sequenceName + "')");
+			nonQuery("ALTER TABLE " + table + " ALTER COLUMN " + column + " SET DEFAULT nextval('" + sequenceName
+					+ "')");
 			nonQuery("ALTER SEQUENCE " + sequenceName + " OWNED BY " + table + "." + column);
 			break;
 		}
 	}
-	
+
 	public void nonQuery(String sql) throws SQLException {
 		nonQuery(sql, null);
 	}
@@ -94,14 +100,15 @@ public class SQLUtil {
 		}
 	}
 
-	private <T> List<T> readGeneratedIds(Statement stmt, ThrowingFunction<ResultSet, T, SQLException> parseGeneratedKey) throws SQLException {
+	private <T> List<T> readGeneratedIds(Statement stmt, ThrowingFunction<ResultSet, T, SQLException> parseGeneratedKey)
+			throws SQLException {
 		List<T> generatedIds = new ArrayList<>();
 
-		if(parseGeneratedKey == null) {
+		if (parseGeneratedKey == null) {
 			// return empty
 			return generatedIds;
 		}
-		
+
 		try (ResultSet rs = stmt.getGeneratedKeys()) {
 			while (rs.next()) {
 				generatedIds.add(parseGeneratedKey.apply(rs));
