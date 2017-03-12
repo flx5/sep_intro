@@ -24,6 +24,10 @@ public abstract class AbstractRepository<T, K> implements Repository<T, K> {
 		this.table = table;
 	}
 
+	protected SQLUtil getSqlUtil() {
+		return sqlUtil;
+	}
+	
 	@Override
 	public Collection<T> all() {
 		return queryAll("SELECT * FROM " + table, null);

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 import de.unipassau.prassefe.sepintro.model.TestPoco;
+import de.unipassau.prassefe.sepintro.model.repository.RepositoryException;
 import de.unipassau.prassefe.sepintro.model.repository.TestPocoAbstractRepositoryTest;
 
 public class AbstractSqlRepositoryTest extends TestPocoAbstractRepositoryTest {
@@ -34,7 +35,13 @@ public class AbstractSqlRepositoryTest extends TestPocoAbstractRepositoryTest {
 
 		public void create() {
 			nonQuery(
-					"CREATE TABLE IF NOT EXISTS test (id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT, value BIGINT NOT NULL)");
+					"CREATE TABLE IF NOT EXISTS test (id INTEGER NOT NULL PRIMARY KEY, value BIGINT NOT NULL)");
+			
+			try {
+				getSqlUtil().createPrimaryKey("test", "id");
+			} catch (SQLException e) {
+				throw new RepositoryException(e);
+			}
 		}
 
 		@Override

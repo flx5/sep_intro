@@ -27,6 +27,7 @@ public class UnitConfig extends AbstractConfig {
 
 	@Override
 	public void reload() {
+		// TODO Support multiple dbs
 		PGSimpleDataSource db = new PGSimpleDataSource();
 		db.setUser(System.getProperty("junit.db.user", ""));
 		db.setPassword(System.getProperty("junit.db.password", ""));
