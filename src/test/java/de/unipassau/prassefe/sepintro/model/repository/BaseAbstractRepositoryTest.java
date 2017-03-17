@@ -14,16 +14,10 @@ import de.unipassau.prassefe.sepintro.junit.UnitConfig;
 public abstract class BaseAbstractRepositoryTest<T, K> {
 
 	private final Repository<T, K> repository;
-	private final boolean testDuplicates;
 
-	public BaseAbstractRepositoryTest(Repository<T, K> repository, boolean testDuplicates) {
-		this.repository = repository;
-		this.testDuplicates = testDuplicates;
-		this.repository.setConfig(UnitConfig.defaultInstance());
-	}
-	
 	public BaseAbstractRepositoryTest(Repository<T, K> repository) {
-		this(repository, false);
+		this.repository = repository;
+		this.repository.setConfig(UnitConfig.defaultInstance());
 	}
 	
 	@Before

@@ -21,7 +21,7 @@ public class MigrationRepositoryTest extends IntAbstractRepositoryTest<Migration
 	private final IntIdGenerator generator;
 
 	public MigrationRepositoryTest(MigrationRepository repository) {
-		super(repository, false);
+		super(repository);
 		this.repository = repository;
 		this.generator = new IntIdGenerator();
 	}
