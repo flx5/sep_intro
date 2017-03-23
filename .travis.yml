@@ -25,7 +25,7 @@ addons:
 
 before_script:
   - sh -c "if [ '$DB' = 'PostgreSQL' ]; then psql -c 'create database travis_ci_test;' -U postgres; fi"
-  - sh -c "if [ '$DB' = 'MySQL' ]; then mysql -e 'CREATE DATABASE travis_ci_test;' -u travis;  fi"
+  - sh -c "if [ '$DB' = 'MySQL' ]; then mysql -e 'CREATE DATABASE travis_ci_test;' -h 127.0.0.1 -u travis;  fi"
 
 install:
   - npm install -g bower
