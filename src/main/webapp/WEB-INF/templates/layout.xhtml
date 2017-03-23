@@ -9,15 +9,8 @@
 	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 	<title><ui:insert name="title">SEP 2017</ui:insert></title>
 
-	<h:outputStylesheet library="components"
-		name="bootstrap/dist/css/bootstrap.min.css" />
-
-	<!-- Use outputText to avoid the conditional comment from being stripped by JSF -->
-	<h:outputText value="&lt;!--[if lt IE 9]&gt;" escape="false" />
-	<h:outputScript library="components"
-		name="html5shiv/dist/html5shiv.min.js" />
-	<h:outputScript library="components" name="respond/dest/respond.min.js" />
-	<h:outputText value="&lt;![endif]--&gt;" escape="false" />
+	<h:outputStylesheet library="css"
+		name="global.css" />
 </h:head>
 
 <body>
@@ -38,8 +31,5 @@
 			<ui:include src="footer.xhtml"/>
 		</ui:insert>
 	</div>
-	<h:outputScript library="components" name="jquery/dist/jquery.min.js" />
-	<h:outputScript library="components"
-		name="bootstrap/dist/js/bootstrap.min.js" />
 </body>
 </html>

@@ -27,3 +27,6 @@ src/main/webapp/resources/components/
 .classpath
 .project
 .settings
+
+nb-configuration.xml
+nbactions.xml

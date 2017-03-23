@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Context>
-<Context>
-  <Resource name="BeanManager" auth="Container"
-    type="javax.enterprise.inject.spi.BeanManager" factory="org.jboss.weld.resources.ManagerObjectFactory" />
+<Context path="/sep_intro">
+  <Resource auth="Container" factory="org.jboss.weld.resources.ManagerObjectFactory" name="BeanManager" type="javax.enterprise.inject.spi.BeanManager"/>
   <!-- <Resource name="jdbc/sep" auth="Container" type="javax.sql.DataSource" 
     maxActive="100" maxIdle="30" maxWaitMillis="10000" username="sep" password="changeme" 
     driverClassName="com.mysql.cj.jdbc.Driver" url="jdbc:mysql://localhost:3306/sep" 
     /> -->
-  <ResourceLink name="jdbc/sep" global="jdbc/sep"
-    type="javax.sql.DataSource" />
+  <ResourceLink global="jdbc/sep" name="jdbc/sep" type="javax.sql.DataSource"/>
 </Context>
