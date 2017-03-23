@@ -6,8 +6,12 @@ jdk:
   - openjdk8
 
 services:
-  - mysql
+#  - mysql
   - postgresql
+
+# using mariadb as workaround since mysql tends to fail to start
+addons:
+  mariadb: '10.0'
 
 env:
   - DB=MySQL DB_USER=travis
