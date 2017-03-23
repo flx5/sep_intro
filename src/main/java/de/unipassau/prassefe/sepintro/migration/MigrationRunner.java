@@ -21,7 +21,7 @@ public class MigrationRunner {
 	public MigrationRunner(AbstractConfig config) {
 		this.config = config;
 		this.migrations = new TreeMap<>();
-		// TODO Implement some kind of finder
+
 		add(new M2017031000_InitialMigration());
 		add(new M2017031001_UserMigration());
 		

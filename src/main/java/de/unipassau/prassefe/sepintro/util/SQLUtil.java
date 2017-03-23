@@ -15,154 +15,157 @@ import de.unipassau.prassefe.sepintro.util.functional.ThrowingFunction;
 
 public class SQLUtil {
 
-	/**
-	 * Known Database types
-	 * 
-	 * @author Felix Prasse
-	 * @see <a href="http://stackoverflow.com/a/254220">List of common
-	 *      values.</a>
-	 */
-	public enum DatabaseType {
-		MySQL("MySQL"), PostgreSQL("PostgreSQL");
+    /**
+     * Known Database types
+     *
+     * @author Felix Prasse
+     * @see <a href="http://stackoverflow.com/a/254220">List of common
+     * values.</a>
+     */
+    public enum DatabaseType {
+        MYSQL("MySQL"), POSTGRESQL("PostgreSQL");
 
-		private final Pattern namePattern;
+        private final Pattern namePattern;
 
-		private DatabaseType(String namePattern) {
-			this.namePattern = Pattern.compile(namePattern);
-		}
+        private DatabaseType(String namePattern) {
+            this.namePattern = Pattern.compile(namePattern);
+        }
 
-		private boolean matches(String name) {
-			return namePattern.matcher(name).matches();
-		}
+        private boolean matches(String name) {
+            return namePattern.matcher(name).matches();
+        }
 
-		public static DatabaseType getByName(String name) {
-			return Arrays.stream(values()).filter(x -> x.matches(name)).findAny()
-					.orElseThrow(() -> new UnsupportedOperationException("Unknown database type"));
-		}
-	}
+        public static DatabaseType getByName(String name) {
+            return Arrays.stream(values()).filter(x -> x.matches(name)).findAny()
+                    .orElseThrow(() -> new UnsupportedOperationException("Unknown database type"));
+        }
+    }
 
-	private Connection connection;
+    private Connection connection;
 
-	public SQLUtil(Connection connection) {
-		this.connection = connection;
-	}
+    public SQLUtil(Connection connection) {
+        this.connection = connection;
+    }
 
-	private DatabaseType getDatabaseType() throws SQLException {
-		String name = this.connection.getMetaData().getDatabaseProductName();
-		return DatabaseType.getByName(name);
-	}
+    private DatabaseType getDatabaseType() throws SQLException {
+        String name = this.connection.getMetaData().getDatabaseProductName();
+        return DatabaseType.getByName(name);
+    }
 
-	public String getVariableBinaryType(int length) throws SQLException {
-		switch (getDatabaseType()) {
-		case MySQL:
-			return "VARBINARY(" + length + ")";
-		case PostgreSQL:
-			return "BYTEA";
-		default:
-			throw new UnsupportedOperationException("Unknown database type");
-		}
-	}
+    public String getVariableBinaryType(int length) throws SQLException {
+        switch (getDatabaseType()) {
+            case MYSQL:
+                return "VARBINARY(" + length + ")";
+            case POSTGRESQL:
+                return "BYTEA";
+            default:
+                throw new UnsupportedOperationException("Unknown database type");
+        }
+    }
 
-	public void createAutoIncrement(String table, String column) throws SQLException {
-		switch (getDatabaseType()) {
-		case MySQL:
-			nonQuery("ALTER TABLE " + table + " MODIFY COLUMN " + column + " INTEGER auto_increment");
-			break;
-		case PostgreSQL:
-			String sequenceName = table + "_" + column + "_seq";
+    public void createAutoIncrement(String table, String column) throws SQLException {
+        switch (getDatabaseType()) {
+            case MYSQL:
+                nonQuery("ALTER TABLE " + table + " MODIFY COLUMN " + column + " INTEGER auto_increment");
+                break;
+            case POSTGRESQL:
+                createPgSqlSequence(table, column);
+                break;
+        }
+    }
 
-			StringBuilder query = new StringBuilder();
-			
-			query.append("do $$\n");
-			query.append("begin\n");
-			query.append("IF NOT EXISTS (SELECT 0 FROM pg_class where relname = '"+sequenceName+"' ) THEN\n");
-			query.append("CREATE SEQUENCE " + sequenceName + ";");
-			query.append("ALTER TABLE " + table + " ALTER COLUMN " + column + " SET DEFAULT nextval('" + sequenceName
-					+ "');");
-			query.append("ALTER SEQUENCE " + sequenceName + " OWNED BY " + table + "." + column + ";");
-			query.append("\nEND IF;");
-			query.append("end\n");
-			query.append("$$\n");
-			nonQuery(query.toString());
-			break;
-		}
-	}
+    private void createPgSqlSequence(String table, String column) throws SQLException {
+        String sequenceName = table + "_" + column + "_seq";
 
-	public void nonQuery(String sql) throws SQLException {
-		nonQuery(sql, null);
-	}
+        StringBuilder query = new StringBuilder();
 
-	public void nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues)
-			throws SQLException {
-		nonQuery(sql, setValues, null);
-	}
+        query.append("do $$\n");
+        query.append("begin\n");
+        query.append("IF NOT EXISTS (SELECT 0 FROM pg_class where relname = '").append(sequenceName).append("' ) THEN\n");
+        query.append("CREATE SEQUENCE ").append(sequenceName).append(";");
+        query.append("ALTER TABLE ").append(table).append(" ALTER COLUMN ").append(column).append(" SET DEFAULT nextval('").append(sequenceName).append("');");
+        query.append("ALTER SEQUENCE ").append(sequenceName).append(" OWNED BY ").append(table).append(".").append(column).append(";");
+        query.append("\nEND IF;");
+        query.append("end\n");
+        query.append("$$\n");
+        nonQuery(query.toString());
+    }
 
-	public <T> List<T> nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,
-			ThrowingFunction<ResultSet, T, SQLException> parseGeneratedKey) throws SQLException {
-		try (NamedPreparedStatement stmt = new NamedPreparedStatement(connection, sql)) {
-			if (setValues != null) {
-				setValues.accept(stmt);
-			}
+    public void nonQuery(String sql) throws SQLException {
+        nonQuery(sql, null);
+    }
 
-			stmt.executeUpdate();
+    public void nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues)
+            throws SQLException {
+        nonQuery(sql, setValues, null);
+    }
 
-			return readGeneratedIds(stmt.getStatement(), parseGeneratedKey);
-		}
-	}
+    public <T> List<T> nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,
+            ThrowingFunction<ResultSet, T, SQLException> parseGeneratedKey) throws SQLException {
+        try (NamedPreparedStatement stmt = new NamedPreparedStatement(connection, sql)) {
+            if (setValues != null) {
+                setValues.accept(stmt);
+            }
 
-	private <T> List<T> readGeneratedIds(Statement stmt, ThrowingFunction<ResultSet, T, SQLException> parseGeneratedKey)
-			throws SQLException {
-		List<T> generatedIds = new ArrayList<>();
+            stmt.executeUpdate();
 
-		if (parseGeneratedKey == null) {
-			// return empty
-			return generatedIds;
-		}
+            return readGeneratedIds(stmt.getStatement(), parseGeneratedKey);
+        }
+    }
 
-		try (ResultSet rs = stmt.getGeneratedKeys()) {
-			while (rs.next()) {
-				generatedIds.add(parseGeneratedKey.apply(rs));
-			}
-		}
+    private <T> List<T> readGeneratedIds(Statement stmt, ThrowingFunction<ResultSet, T, SQLException> parseGeneratedKey)
+            throws SQLException {
+        List<T> generatedIds = new ArrayList<>();
 
-		return generatedIds;
-	}
+        if (parseGeneratedKey == null) {
+            // return empty
+            return generatedIds;
+        }
 
-	private ResultSet query(NamedPreparedStatement stmt,
-			ThrowingConsumer<NamedPreparedStatement, SQLException> setValues) throws SQLException {
+        try (ResultSet rs = stmt.getGeneratedKeys()) {
+            while (rs.next()) {
+                generatedIds.add(parseGeneratedKey.apply(rs));
+            }
+        }
 
-		if (setValues != null) {
-			setValues.accept(stmt);
-		}
+        return generatedIds;
+    }
 
-		return stmt.executeQuery();
-	}
+    private ResultSet query(NamedPreparedStatement stmt,
+            ThrowingConsumer<NamedPreparedStatement, SQLException> setValues) throws SQLException {
 
-	public <T> List<T> queryAll(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,
-			ThrowingFunction<ResultSet, T, SQLException> toItem) throws SQLException {
-		try (NamedPreparedStatement stmt = new NamedPreparedStatement(this.connection, sql)) {
-			ResultSet result = query(stmt, setValues);
+        if (setValues != null) {
+            setValues.accept(stmt);
+        }
 
-			List<T> values = new ArrayList<>();
+        return stmt.executeQuery();
+    }
 
-			while (result.next()) {
-				values.add(toItem.apply(result));
-			}
+    public <T> List<T> queryAll(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,
+            ThrowingFunction<ResultSet, T, SQLException> toItem) throws SQLException {
+        try (NamedPreparedStatement stmt = new NamedPreparedStatement(this.connection, sql)) {
+            ResultSet result = query(stmt, setValues);
 
-			return values;
+            List<T> values = new ArrayList<>();
 
-		}
-	}
+            while (result.next()) {
+                values.add(toItem.apply(result));
+            }
 
-	public <T> Optional<T> queryFirst(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,
-			ThrowingFunction<ResultSet, T, SQLException> toItem) throws SQLException {
-		try (NamedPreparedStatement stmt = new NamedPreparedStatement(this.connection, sql)) {
-			ResultSet result = query(stmt, setValues);
-			if (result.next()) {
-				return Optional.of(toItem.apply(result));
-			} else {
-				return Optional.empty();
-			}
-		}
-	}
+            return values;
+
+        }
+    }
+
+    public <T> Optional<T> queryFirst(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,
+            ThrowingFunction<ResultSet, T, SQLException> toItem) throws SQLException {
+        try (NamedPreparedStatement stmt = new NamedPreparedStatement(this.connection, sql)) {
+            ResultSet result = query(stmt, setValues);
+            if (result.next()) {
+                return Optional.of(toItem.apply(result));
+            } else {
+                return Optional.empty();
+            }
+        }
+    }
 }

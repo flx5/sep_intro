@@ -17,7 +17,7 @@ import de.unipassau.prassefe.sepintro.util.EnumUtil;
 public class UnitConfig extends AbstractConfig {
 
 	private enum SqlBackend {
-		PostgreSQL(SqlBackend::pgsqlSupplier), MySQL(SqlBackend::mySqlSupplier);
+		POSTGRESQL(SqlBackend::pgsqlSupplier), MYSQL(SqlBackend::mySqlSupplier);
 
 		private final Supplier<DataSource> dsSupplier;
 
