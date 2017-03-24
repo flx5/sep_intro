@@ -13,17 +13,29 @@ import java.util.regex.Pattern;
 import de.unipassau.prassefe.sepintro.util.functional.ThrowingConsumer;
 import de.unipassau.prassefe.sepintro.util.functional.ThrowingFunction;
 
+/**
+ * Utility for handling sql.
+ *
+ * @author Felix Prasse <prassefe@fim.uni-passau.de>
+ */
 public class SQLUtil {
 
     /**
-     * Known Database types
+     * Known Database types.
      *
-     * @author Felix Prasse
+     * @author Felix Prasse <prassefe@fim.uni-passau.de>
      * @see <a href="http://stackoverflow.com/a/254220">List of common
      * values.</a>
      */
     public enum DatabaseType {
-        MYSQL("MySQL"), POSTGRESQL("PostgreSQL");
+        /**
+         * Mysql.
+         */
+        MYSQL("MySQL"),
+        /**
+         * Postgres.
+         */
+        POSTGRESQL("PostgreSQL");
 
         private final Pattern namePattern;
 
@@ -35,6 +47,12 @@ public class SQLUtil {
             return namePattern.matcher(name).matches();
         }
 
+        /**
+         * Get database type by given name.
+         *
+         * @param name The name.
+         * @return DB Type.
+         */
         public static DatabaseType getByName(String name) {
             return Arrays.stream(values()).filter(x -> x.matches(name)).findAny()
                     .orElseThrow(() -> new UnsupportedOperationException("Unknown database type"));
@@ -43,6 +61,11 @@ public class SQLUtil {
 
     private Connection connection;
 
+    /**
+     * Create new sql util.
+     *
+     * @param connection The active connection.
+     */
     public SQLUtil(Connection connection) {
         this.connection = connection;
     }
@@ -52,6 +75,13 @@ public class SQLUtil {
         return DatabaseType.getByName(name);
     }
 
+    /**
+     * Get varbinary type based upon db type.
+     *
+     * @param length The length of the binary field.
+     * @return The column descriptor.
+     * @throws SQLException
+     */
     public String getVariableBinaryType(int length) throws SQLException {
         switch (getDatabaseType()) {
             case MYSQL:
@@ -63,6 +93,13 @@ public class SQLUtil {
         }
     }
 
+    /**
+     * Add auto increment to column.
+     *
+     * @param table The table.
+     * @param column The column.
+     * @throws SQLException
+     */
     public void createAutoIncrement(String table, String column) throws SQLException {
         switch (getDatabaseType()) {
             case MYSQL:
@@ -91,15 +128,38 @@ public class SQLUtil {
         nonQuery(query.toString());
     }
 
+    /**
+     * Execute sql query.
+     *
+     * @param sql The query.
+     * @throws SQLException
+     */
     public void nonQuery(String sql) throws SQLException {
         nonQuery(sql, null);
     }
 
+    /**
+     * Execute sql query.
+     *
+     * @param sql The query.
+     * @param setValues Callback to set params.
+     * @throws SQLException
+     */
     public void nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues)
             throws SQLException {
         nonQuery(sql, setValues, null);
     }
 
+    /**
+     * Execute sql query.
+     *
+     * @param <T> Key type.
+     * @param sql The query.
+     * @param setValues Callback to set params.
+     * @param parseGeneratedKey Parse generated keys.
+     * @return The generated keys.
+     * @throws SQLException
+     */
     public <T> List<T> nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,
             ThrowingFunction<ResultSet, T, SQLException> parseGeneratedKey) throws SQLException {
         try (NamedPreparedStatement stmt = new NamedPreparedStatement(connection, sql)) {
@@ -141,6 +201,16 @@ public class SQLUtil {
         return stmt.executeQuery();
     }
 
+    /**
+     * Get all results.
+     *
+     * @param <T> The entry type.
+     * @param sql The query.
+     * @param setValues Callback to set params.
+     * @param toItem Converter from sql result to item.
+     * @return The result.
+     * @throws java.sql.SQLException
+     */
     public <T> List<T> queryAll(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,
             ThrowingFunction<ResultSet, T, SQLException> toItem) throws SQLException {
         try (NamedPreparedStatement stmt = new NamedPreparedStatement(this.connection, sql)) {
@@ -157,6 +227,16 @@ public class SQLUtil {
         }
     }
 
+    /**
+     * Get first result.
+     *
+     * @param <T> The entry type.
+     * @param sql The query.
+     * @param setValues Callback to set params.
+     * @param toItem Converter from sql result to item.
+     * @return The result.
+     * @throws java.sql.SQLException
+     */
     public <T> Optional<T> queryFirst(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,
             ThrowingFunction<ResultSet, T, SQLException> toItem) throws SQLException {
         try (NamedPreparedStatement stmt = new NamedPreparedStatement(this.connection, sql)) {

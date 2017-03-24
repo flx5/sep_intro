@@ -13,156 +13,240 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Prepared statement supporting named parameters.
+ *
+ * @author Felix Prasse <prassefe@fim.uni-passau.de>
+ */
 public class NamedPreparedStatement implements AutoCloseable {
-	private final Map<String, List<Integer>> paramMap;
-	private final PreparedStatement statement;
 
-	public NamedPreparedStatement(Connection connection, String query) throws SQLException {
-		this.paramMap = new HashMap<>();
-		String parsedQuery = parse(query);
-		this.statement = connection.prepareStatement(parsedQuery, Statement.RETURN_GENERATED_KEYS);
-	}
+    private final Map<String, List<Integer>> paramMap;
+    private final PreparedStatement statement;
 
-	private final String parse(String query) {
-		int length = query.length();
-		int index = 0;
+    /**
+     * Create a new prepared statement.
+     *
+     * @param connection The connection.
+     * @param query The query.
+     * @throws SQLException
+     */
+    public NamedPreparedStatement(Connection connection, String query) throws SQLException {
+        this.paramMap = new HashMap<>();
+        String parsedQuery = parse(query);
+        this.statement = connection.prepareStatement(parsedQuery, Statement.RETURN_GENERATED_KEYS);
+    }
 
-		StringBuilder parsedQuery = new StringBuilder(length);
+    private final String parse(String query) {
+        int length = query.length();
+        int index = 0;
 
-		boolean inQuotes = false;
-		char quoteChar = '"';
+        StringBuilder parsedQuery = new StringBuilder(length);
 
-		int pos = 0;
-		while (pos < length) {
-			char c = query.charAt(pos);
+        boolean inQuotes = false;
+        char quoteChar = '"';
 
-			if (c == '\'' || c == '"') {
-				if (!inQuotes) {
-					inQuotes = true;
-					quoteChar = c;
-				} else if (quoteChar == c) {
-					inQuotes = false;
-				}
-			} else if (!inQuotes && c == ':' && pos + 1 < length && Character.isJavaIdentifierStart(query.charAt(pos + 1))) {
-				String name = getWord(pos + 1, query);
-				registerName(name, ++index);
+        int pos = 0;
+        while (pos < length) {
+            char c = query.charAt(pos);
 
-				// Replace parameter with question mark
-				c = '?';
+            if (c == '\'' || c == '"') {
+                if (!inQuotes) {
+                    inQuotes = true;
+                    quoteChar = c;
+                } else if (quoteChar == c) {
+                    inQuotes = false;
+                }
+            } else if (!inQuotes && c == ':' && pos + 1 < length && Character.isJavaIdentifierStart(query.charAt(pos + 1))) {
+                String name = getWord(pos + 1, query);
+                registerName(name, ++index);
 
-				// skip past end of parameter
-				pos += name.length();
-			}
+                // Replace parameter with question mark
+                c = '?';
 
-			parsedQuery.append(c);
-			++pos;
-		}
+                // skip past end of parameter
+                pos += name.length();
+            }
 
-		return parsedQuery.toString();
-	}
+            parsedQuery.append(c);
+            ++pos;
+        }
 
-	private void registerName(String name, int index) {
-		if (!paramMap.containsKey(name)) {
-			paramMap.put(name, new ArrayList<>());
-		}
+        return parsedQuery.toString();
+    }
 
-		paramMap.get(name).add(index);
-	}
+    private void registerName(String name, int index) {
+        if (!paramMap.containsKey(name)) {
+            paramMap.put(name, new ArrayList<>());
+        }
 
-	private String getWord(int start, String text) {
-		int j = findEndOfWord(start, text);
-		return text.substring(start, j);
-	}
+        paramMap.get(name).add(index);
+    }
 
-	private int findEndOfWord(int start, String text) {
-		int position = start + 1;
-		while (position < text.length() && Character.isJavaIdentifierPart(text.charAt(position))) {
-			// walk j to end of word
-			++position;
-		}
-		return position;
-	}
+    private String getWord(int start, String text) {
+        int j = findEndOfWord(start, text);
+        return text.substring(start, j);
+    }
 
-	public PreparedStatement getStatement() {
-		return statement;
-	}
+    private int findEndOfWord(int start, String text) {
+        int position = start + 1;
+        while (position < text.length() && Character.isJavaIdentifierPart(text.charAt(position))) {
+            // walk j to end of word
+            ++position;
+        }
+        return position;
+    }
 
-	private List<Integer> getIndexes(String name) {
-		List<Integer> indexes = paramMap.get(name);
-		if (indexes == null) {
-			throw new IllegalArgumentException("Parameter not found: " + name);
-		}
-		return indexes;
-	}
+    /**
+     * Get underlying statement.
+     *
+     * @return The underlying statement.
+     */
+    public PreparedStatement getStatement() {
+        return statement;
+    }
 
-	public void setObject(String name, Object value) throws SQLException {
-		for (int index : getIndexes(name)) {
-			statement.setObject(index, value);
-		}
-	}
+    private List<Integer> getIndexes(String name) {
+        List<Integer> indexes = paramMap.get(name);
+        if (indexes == null) {
+            throw new IllegalArgumentException("Parameter not found: " + name);
+        }
+        return indexes;
+    }
 
-	public void setString(String name, String value) throws SQLException {
-		for (int index : getIndexes(name)) {
-			statement.setString(index, value);
-		}
-	}
+    /**
+     * Set object.
+     *
+     * @param name The param name.
+     * @param value The param value.
+     * @throws SQLException if an sql exception occurs.
+     */
+    public void setObject(String name, Object value) throws SQLException {
+        for (int index : getIndexes(name)) {
+            statement.setObject(index, value);
+        }
+    }
 
-	public void setInt(String name, int value) throws SQLException {
-		for (int index : getIndexes(name)) {
-			statement.setInt(index, value);
-		}
-	}
+    /**
+     * Set string.
+     *
+     * @param name The param name.
+     * @param value The param value.
+     * @throws SQLException if an sql exception occurs.
+     */
+    public void setString(String name, String value) throws SQLException {
+        for (int index : getIndexes(name)) {
+            statement.setString(index, value);
+        }
+    }
 
-	public void setLong(String name, long value) throws SQLException {
-		for (int index : getIndexes(name)) {
-			statement.setLong(index, value);
-		}
-	}
+    /**
+     * Set int.
+     *
+     * @param name The param name.
+     * @param value The param value.
+     * @throws SQLException if an sql exception occurs.
+     */
+    public void setInt(String name, int value) throws SQLException {
+        for (int index : getIndexes(name)) {
+            statement.setInt(index, value);
+        }
+    }
 
-	public void setDate(String name, Date value) throws SQLException {
-		for (int index : getIndexes(name)) {
-			statement.setDate(index, value);
-		}
-	}
+    /**
+     * Set long.
+     *
+     * @param name The param name.
+     * @param value The param value.
+     * @throws SQLException if an sql exception occurs.
+     */
+    public void setLong(String name, long value) throws SQLException {
+        for (int index : getIndexes(name)) {
+            statement.setLong(index, value);
+        }
+    }
 
-	public void setDate(String name, LocalDate value) throws SQLException {
-		setDate(name, Date.valueOf(value));
-	}
+    /**
+     * Set date.
+     *
+     * @param name The param name.
+     * @param value The param value.
+     * @throws SQLException if an sql exception occurs.
+     */
+    public void setDate(String name, Date value) throws SQLException {
+        for (int index : getIndexes(name)) {
+            statement.setDate(index, value);
+        }
+    }
 
-	public void setBytes(String name, byte[] value) throws SQLException {
-		for (int index : getIndexes(name)) {
-			statement.setBytes(index, value);
-		}
-	}
+    /**
+     * Set date.
+     *
+     * @param name The param name.
+     * @param value The param value.
+     * @throws SQLException if an sql exception occurs.
+     */
+    public void setDate(String name, LocalDate value) throws SQLException {
+        setDate(name, Date.valueOf(value));
+    }
 
-	public void setTimestamp(String name, Timestamp value) throws SQLException {
-		for (int index : getIndexes(name)) {
-			statement.setTimestamp(index, value);
-		}
-	}
+    /**
+     * Set bytes.
+     *
+     * @param name The param name.
+     * @param value The param value.
+     * @throws SQLException if an sql exception occurs.
+     */
+    public void setBytes(String name, byte[] value) throws SQLException {
+        for (int index : getIndexes(name)) {
+            statement.setBytes(index, value);
+        }
+    }
 
-	public boolean execute() throws SQLException {
-		return statement.execute();
-	}
+    /**
+     * Set timestamp.
+     *
+     * @param name The param name.
+     * @param value The param value.
+     * @throws SQLException if an sql exception occurs.
+     */
+    public void setTimestamp(String name, Timestamp value) throws SQLException {
+        for (int index : getIndexes(name)) {
+            statement.setTimestamp(index, value);
+        }
+    }
 
-	public ResultSet executeQuery() throws SQLException {
-		return statement.executeQuery();
-	}
+    /**
+     * Execute statement.
+     * @return True on success.
+     * @throws SQLException 
+     */
+    public boolean execute() throws SQLException {
+        return statement.execute();
+    }
 
-	public int executeUpdate() throws SQLException {
-		return statement.executeUpdate();
-	}
+    /**
+     * Execute statement.
+     * @return query result.
+     * @throws SQLException 
+     */
+    public ResultSet executeQuery() throws SQLException {
+        return statement.executeQuery();
+    }
 
-	@Override
-	public void close() throws SQLException {
-		statement.close();
-	}
+    /**
+     * Execute update.
+     * @return Affected row count.
+     * @throws SQLException 
+     */
+    public int executeUpdate() throws SQLException {
+        return statement.executeUpdate();
+    }
 
-	public void addBatch() throws SQLException {
-		statement.addBatch();
-	}
-
-	public int[] executeBatch() throws SQLException {
-		return statement.executeBatch();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws SQLException {
+        statement.close();
+    }
 }
