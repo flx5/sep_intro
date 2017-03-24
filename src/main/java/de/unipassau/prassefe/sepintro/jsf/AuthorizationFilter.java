@@ -20,7 +20,7 @@ import de.unipassau.prassefe.sepintro.model.UserSession;
  *
  * @author Felix Prasse <prassefe@fim.uni-passau.de>
  */
-public class AuthorizationFilter implements Filter {
+public final class AuthorizationFilter implements Filter {
 
     /**
      * {@inheritDoc }
@@ -34,32 +34,41 @@ public class AuthorizationFilter implements Filter {
      * {@inheritDoc }
      */
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+    public void doFilter(final ServletRequest request,
+            final ServletResponse response, final FilterChain chain)
             throws IOException, ServletException {
 
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         HttpSession session = req.getSession(false);
 
-        UserSession user = (session != null) ? (UserSession) session.getAttribute("userSession") : null;
+        UserSession user = null;
+
+        if (session != null) {
+            user = (UserSession) session.getAttribute("userSession");
+        }
 
         boolean loggedIn = user != null && user.isLoggedIn();
 
-        if (!isOnLogin(req) && !loggedIn) {
+        if (!isOnLogin(req)
+                && !loggedIn) {
             redirect(req, res, Page.LOGIN.getViewId());
-        } else if (loggedIn && isOnLogin(req)) {
+        } else if (loggedIn
+                && isOnLogin(req)) {
             redirect(req, res, Page.PROFILE.getViewId());
         } else {
             chain.doFilter(request, response);
         }
     }
 
-    private boolean isOnLogin(HttpServletRequest req) {
+    private boolean isOnLogin(final HttpServletRequest req) {
         String reqURI = req.getRequestURI();
         return reqURI.endsWith(Page.LOGIN.getViewId());
     }
 
-    private void redirect(HttpServletRequest req, HttpServletResponse res, String url) throws IOException {
+    private void redirect(final HttpServletRequest req,
+            final HttpServletResponse res,
+            final String url) throws IOException {
         res.sendRedirect(req.getContextPath() + url);
     }
 
@@ -67,7 +76,7 @@ public class AuthorizationFilter implements Filter {
      * {@inheritDoc }
      */
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(final FilterConfig filterConfig) throws ServletException {
         // nothing to do
     }
 

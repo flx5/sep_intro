@@ -14,10 +14,10 @@ public abstract class JsfEnumAdapter<T extends Enum<?>> {
 
     /**
      * Create a new enumeration adapter.
-     * @param enumClass The enum this adapter wraps.
+     * @param enumClazz The enum this adapter wraps.
      */
-    public JsfEnumAdapter(Class<T> enumClass) {
-        this.enumClass = enumClass;
+    public JsfEnumAdapter(final Class<T> enumClazz) {
+        this.enumClass = enumClazz;
     }
 
     /**

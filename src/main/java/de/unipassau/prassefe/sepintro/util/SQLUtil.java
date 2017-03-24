@@ -18,7 +18,7 @@ import de.unipassau.prassefe.sepintro.util.functional.ThrowingFunction;
  *
  * @author Felix Prasse <prassefe@fim.uni-passau.de>
  */
-public class SQLUtil {
+public final class SQLUtil {
 
     /**
      * Known Database types.
@@ -54,8 +54,10 @@ public class SQLUtil {
          * @return DB Type.
          */
         public static DatabaseType getByName(String name) {
-            return Arrays.stream(values()).filter(x -> x.matches(name)).findAny()
-                    .orElseThrow(() -> new UnsupportedOperationException("Unknown database type"));
+            return Arrays.stream(values()).filter(x -> x.matches(name)).
+                    findAny()
+                    .orElseThrow(() -> new UnsupportedOperationException(
+                    "Unknown database type"));
         }
     }
 
@@ -100,10 +102,12 @@ public class SQLUtil {
      * @param column The column.
      * @throws SQLException
      */
-    public void createAutoIncrement(String table, String column) throws SQLException {
+    public void createAutoIncrement(String table, String column) throws
+            SQLException {
         switch (getDatabaseType()) {
             case MYSQL:
-                nonQuery("ALTER TABLE " + table + " MODIFY COLUMN " + column + " INTEGER auto_increment");
+                nonQuery(
+                        "ALTER TABLE " + table + " MODIFY COLUMN " + column + " INTEGER auto_increment");
                 break;
             case POSTGRESQL:
                 createPgSqlSequence(table, column);
@@ -111,17 +115,23 @@ public class SQLUtil {
         }
     }
 
-    private void createPgSqlSequence(String table, String column) throws SQLException {
+    private void createPgSqlSequence(String table, String column) throws
+            SQLException {
         String sequenceName = table + "_" + column + "_seq";
 
         StringBuilder query = new StringBuilder();
 
         query.append("do $$\n");
         query.append("begin\n");
-        query.append("IF NOT EXISTS (SELECT 0 FROM pg_class where relname = '").append(sequenceName).append("' ) THEN\n");
+        query.append("IF NOT EXISTS (SELECT 0 FROM pg_class where relname = '").
+                append(sequenceName).append("' ) THEN\n");
         query.append("CREATE SEQUENCE ").append(sequenceName).append(";");
-        query.append("ALTER TABLE ").append(table).append(" ALTER COLUMN ").append(column).append(" SET DEFAULT nextval('").append(sequenceName).append("');");
-        query.append("ALTER SEQUENCE ").append(sequenceName).append(" OWNED BY ").append(table).append(".").append(column).append(";");
+        query.append("ALTER TABLE ").append(table).append(" ALTER COLUMN ").
+                append(column).append(" SET DEFAULT nextval('").append(
+                sequenceName).append("');");
+        query.append("ALTER SEQUENCE ").append(sequenceName).
+                append(" OWNED BY ").append(table).append(".").append(column).
+                append(";");
         query.append("\nEND IF;");
         query.append("end\n");
         query.append("$$\n");
@@ -145,7 +155,8 @@ public class SQLUtil {
      * @param setValues Callback to set params.
      * @throws SQLException
      */
-    public void nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues)
+    public void nonQuery(String sql,
+            ThrowingConsumer<NamedPreparedStatement, SQLException> setValues)
             throws SQLException {
         nonQuery(sql, setValues, null);
     }
@@ -160,9 +171,12 @@ public class SQLUtil {
      * @return The generated keys.
      * @throws SQLException
      */
-    public <T> List<T> nonQuery(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,
-            ThrowingFunction<ResultSet, T, SQLException> parseGeneratedKey) throws SQLException {
-        try (NamedPreparedStatement stmt = new NamedPreparedStatement(connection, sql)) {
+    public <T> List<T> nonQuery(String sql,
+            ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,
+            ThrowingFunction<ResultSet, T, SQLException> parseGeneratedKey) throws
+            SQLException {
+        try (NamedPreparedStatement stmt = new NamedPreparedStatement(connection,
+                sql)) {
             if (setValues != null) {
                 setValues.accept(stmt);
             }
@@ -173,7 +187,8 @@ public class SQLUtil {
         }
     }
 
-    private <T> List<T> readGeneratedIds(Statement stmt, ThrowingFunction<ResultSet, T, SQLException> parseGeneratedKey)
+    private <T> List<T> readGeneratedIds(Statement stmt,
+            ThrowingFunction<ResultSet, T, SQLException> parseGeneratedKey)
             throws SQLException {
         List<T> generatedIds = new ArrayList<>();
 
@@ -192,7 +207,8 @@ public class SQLUtil {
     }
 
     private ResultSet query(NamedPreparedStatement stmt,
-            ThrowingConsumer<NamedPreparedStatement, SQLException> setValues) throws SQLException {
+            ThrowingConsumer<NamedPreparedStatement, SQLException> setValues) throws
+            SQLException {
 
         if (setValues != null) {
             setValues.accept(stmt);
@@ -211,9 +227,12 @@ public class SQLUtil {
      * @return The result.
      * @throws java.sql.SQLException
      */
-    public <T> List<T> queryAll(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,
-            ThrowingFunction<ResultSet, T, SQLException> toItem) throws SQLException {
-        try (NamedPreparedStatement stmt = new NamedPreparedStatement(this.connection, sql)) {
+    public <T> List<T> queryAll(String sql,
+            ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,
+            ThrowingFunction<ResultSet, T, SQLException> toItem) throws
+            SQLException {
+        try (NamedPreparedStatement stmt = new NamedPreparedStatement(
+                this.connection, sql)) {
             ResultSet result = query(stmt, setValues);
 
             List<T> values = new ArrayList<>();
@@ -237,9 +256,12 @@ public class SQLUtil {
      * @return The result.
      * @throws java.sql.SQLException
      */
-    public <T> Optional<T> queryFirst(String sql, ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,
-            ThrowingFunction<ResultSet, T, SQLException> toItem) throws SQLException {
-        try (NamedPreparedStatement stmt = new NamedPreparedStatement(this.connection, sql)) {
+    public <T> Optional<T> queryFirst(String sql,
+            ThrowingConsumer<NamedPreparedStatement, SQLException> setValues,
+            ThrowingFunction<ResultSet, T, SQLException> toItem) throws
+            SQLException {
+        try (NamedPreparedStatement stmt = new NamedPreparedStatement(
+                this.connection, sql)) {
             ResultSet result = query(stmt, setValues);
             if (result.next()) {
                 return Optional.of(toItem.apply(result));
