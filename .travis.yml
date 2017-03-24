@@ -5,12 +5,13 @@ jdk:
   - oraclejdk8
   - openjdk8
 
+# Mysql disabled as travis tends to fail to start the service
 services:
-  - mysql
+#  - mysql
   - postgresql
 
 env:
-  - DB=MySQL DB_USER=travis
+#  - DB=MySQL DB_USER=travis
   - DB=PostgreSQL DB_USER=postgres
 
 addons:
