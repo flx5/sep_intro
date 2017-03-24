@@ -5,6 +5,10 @@ import java.sql.SQLException;
 import de.unipassau.prassefe.sepintro.model.User;
 import de.unipassau.prassefe.sepintro.util.SQLUtil;
 
+/**
+ * Initial migration.
+ * @author Felix Prasse <prassefe@fim.uni-passau.de>
+ */
 public class M2017031000_InitialMigration extends SqlMigration {
 
 	@Override

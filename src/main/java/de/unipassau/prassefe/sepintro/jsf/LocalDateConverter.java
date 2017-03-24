@@ -13,6 +13,10 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 
+/**
+ * Converter between {@link LocalDate} and text representation for JSF.
+ * @author Felix Prasse <prassefe@fim.uni-passau.de>
+ */
 @FacesConverter(forClass = LocalDate.class)
 public class LocalDateConverter implements Converter {
 

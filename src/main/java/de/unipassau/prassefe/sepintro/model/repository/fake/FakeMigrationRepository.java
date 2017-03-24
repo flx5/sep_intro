@@ -7,6 +7,10 @@ import java.util.concurrent.ConcurrentMap;
 import de.unipassau.prassefe.sepintro.model.MigrationEntry;
 import de.unipassau.prassefe.sepintro.model.repository.MigrationRepository;
 
+/**
+ * In memory migration repository.
+ * @author Felix Prasse <prassefe@fim.uni-passau.de>
+ */
 public class FakeMigrationRepository extends AbstractFakeRepository<MigrationEntry, Integer>
 		implements MigrationRepository {
 

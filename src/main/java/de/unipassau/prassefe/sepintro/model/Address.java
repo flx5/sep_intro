@@ -1,5 +1,9 @@
 package de.unipassau.prassefe.sepintro.model;
 
+/**
+ * Address struct.
+ * @author Felix Prasse <prassefe@fim.uni-passau.de>
+ */
 public class Address {
 	/**
 	 * The street.
@@ -44,6 +48,9 @@ public class Address {
 		this.country = country;
 	}
 	
+        /**
+         * Create new empty address.
+         */
 	public Address() {
 		this("", 0, "", "", "");
 	}

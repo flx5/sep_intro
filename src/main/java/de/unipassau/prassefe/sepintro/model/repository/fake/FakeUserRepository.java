@@ -8,6 +8,10 @@ import de.unipassau.prassefe.sepintro.model.User;
 import de.unipassau.prassefe.sepintro.model.repository.RepositoryException;
 import de.unipassau.prassefe.sepintro.model.repository.UserRepository;
 
+/**
+ * In memory user repository.
+ * @author Felix Prasse <prassefe@fim.uni-passau.de>
+ */
 public class FakeUserRepository extends AbstractFakeRepository<User, Integer> implements UserRepository {
 	private static ConcurrentMap<Integer, User> storage = new ConcurrentHashMap<>();
 	

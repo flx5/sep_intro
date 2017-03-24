@@ -116,6 +116,23 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.0.0</version>
+        <configuration>
+          <webResources>
+            <resource>
+              <directory>${project.build.sourceDirectory}</directory>
+              <targetPath>sources/main</targetPath>
+            </resource>
+            <resource>
+              <directory>${project.build.testSourceDirectory}</directory>
+              <targetPath>sources/test</targetPath>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>

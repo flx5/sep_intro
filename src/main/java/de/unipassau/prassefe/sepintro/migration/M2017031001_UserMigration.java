@@ -4,6 +4,10 @@ import de.unipassau.prassefe.sepintro.model.User;
 import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
 import de.unipassau.prassefe.sepintro.model.repository.UserRepository;
 
+/**
+ * Migration to initialize user data.
+ * @author Felix Prasse <prassefe@fim.uni-passau.de>
+ */
 public class M2017031001_UserMigration extends AllMigration {
 	@Override
 	public void up(AbstractConfig config) {

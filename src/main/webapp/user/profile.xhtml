@@ -2,7 +2,8 @@
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:ui="http://java.sun.com/jsf/facelets">
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
     <ui:define name="title">Profile</ui:define>
     <ui:define name="content">
 
@@ -60,7 +61,7 @@
             </div>
             <div class="form-group">
                 <h:outputLabel value="Streetnumber:" for="streetnr" />
-                <h:inputText class="form-control" type="number" label="Streetnumber"
+                <h:inputText class="form-control" p:type="number" label="Streetnumber"
                              id="streetnr" value="#{userSession.user.address.streetNumber}"
                              required="false" />
             </div>

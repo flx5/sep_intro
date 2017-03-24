@@ -13,7 +13,7 @@ public interface Migration {
 	/**
 	 * The id of the migration.
 	 * It is recommended to use the following format:
-	 * YYYYmmdd<Digit><Digit>
+	 * YYYYmmdd{@literal <Digit><Digit>}
 	 * @return The id.
 	 */
 	long getId();
@@ -25,13 +25,13 @@ public interface Migration {
 	Backend[] getBackends();
 	
 	/**
-	 * Migrate up from previous
+	 * Migrate up from previous version.
 	 * @param config The active configuration
 	 */
 	void up(AbstractConfig config);
 	
 	/**
-	 * Migrate down to previous
+	 * Migrate down to previous version.
 	 * @param config The active configuration
 	 */
 	void down(AbstractConfig config);

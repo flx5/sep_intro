@@ -9,6 +9,10 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+/**
+ * JSF configuration implementation.
+ * @author Felix Prasse <prassefe@fim.uni-passau.de>
+ */
 @ManagedBean(eager = true, name = "appConfig")
 @ApplicationScoped
 public class Config extends AbstractConfig {

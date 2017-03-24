@@ -1,14 +1,22 @@
 package de.unipassau.prassefe.sepintro.model.repository;
 
-public class RepositoryNotFoundException extends RuntimeException {
+/**
+ * Exception to be thrown if a repository implementation is missing.
+ *
+ * @author Felix Prasse <prassefe@fim.uni-passau.de>
+ */
+public class RepositoryNotFoundException extends RepositoryException {
 
-	/**
-	 * Serial version id
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     * Serial version id.
+     */
+    private static final long serialVersionUID = 1L;
 
-
-	public RepositoryNotFoundException(Throwable inner) {
-		super(inner);
-	}
+    /**
+     * Create new exception.
+     * @param inner The reason.
+     */
+    public RepositoryNotFoundException(final Throwable inner) {
+        super(inner);
+    }
 }

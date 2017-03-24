@@ -11,6 +11,10 @@ import javax.faces.context.FacesContext;
 import de.unipassau.prassefe.sepintro.model.config.AbstractConfig;
 import de.unipassau.prassefe.sepintro.model.repository.UserRepository;
 
+/**
+ * Login bean.
+ * @author Felix Prasse <prassefe@fim.uni-passau.de>
+ */
 @ManagedBean
 @RequestScoped
 public class Login {
@@ -61,14 +65,26 @@ public class Login {
 		this.password = password;
 	}
 
+        /**
+         * Set user session.
+         * @param userSession the session to set.
+         */
 	public void setUserSession(UserSession userSession) {
 		this.userSession = userSession;
 	}
 
+        /**
+         * Set active config.
+         * @param config The new config.
+         */
 	public void setConfig(AbstractConfig config) {
 		this.config = config;
 	}
 
+        /**
+         * Try to login the user.
+         * @return Redirect on success.
+         */
 	public String login() {
 		Optional<User> user;
 
